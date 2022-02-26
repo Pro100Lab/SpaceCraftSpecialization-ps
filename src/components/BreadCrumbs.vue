@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card class="fill-height">
         <v-breadcrumbs :items="crumbs"/>
     </v-card>
 </template>

@@ -6,98 +6,53 @@
                class="mx-auto"
                width="60%"
     >
-        <div class="text-center">
+        <div class="text-center" v-for="root in rootCategories" :key="root.id">
             <v-menu offset-y open-on-hover>
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn
                             color="transparent"
                             v-bind="attrs"
                             v-on="on"
+                            :to="`/category/${root.id}`"
                     >
-                        Монтаж и сервис
+                        {{root.title}}
+                        <v-icon v-if="root.children && root.children.length > 0">
+                            mdi-chevron-down
+                        </v-icon>
                     </v-btn>
                 </template>
                 <v-list>
                     <v-list-item
-                            v-for="(item, index) in inst_items"
-                            :key="index"
+                            v-for="child in root.children"
+                            :key="child.id"
                             link
-                            :to="item.link"
+                            :to="`/category/${child.id}`"
                     >
-                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        <v-list-item-title>{{ child.title }}</v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
-        </div>
-        <v-divider vertical/>
-        <div class="text-center">
-            <v-menu offset-y open-on-hover>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                            color="transparent"
-                            v-bind="attrs"
-                            v-on="on"
-                    >
-                        Кондиционеры
-                    </v-btn>
-                </template>
-                <v-list>
-                    <v-list-item
-                            v-for="(item, index) in conditions"
-                            :key="index"
-                            link
-                            :to="item.link"
-                    >
-                        <v-list-item-title>{{ item.title }}</v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-        </div>
-        <v-divider vertical/>
-        <div class="text-center">
-            <v-menu offset-y open-on-hover>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                            color="transparent"
-                            v-bind="attrs"
-                            v-on="on"
-                    >
-                        Вентиляция
-                    </v-btn>
-                </template>
-                <v-list>
-                    <v-list-item
-                            v-for="(item, index) in air_items"
-                            :key="index"
-                            link
-                            :to="item.link"
-                    >
-                        <v-list-item-title >{{ item.title }}</v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
+            <v-divider vertical/>
         </div>
     </v-toolbar>
     </v-card>
 </template>
 
 <script>
+    import {getURL} from "../settings";
+    import axios from "axios";
+
     export default {
         name: "MinorAppBar",
         data: () => ({
-            inst_items: [
-                { title: 'Установка кондеев', link: '/category/1' },
-                { title: 'Прокладка трассы', link: '/category/2' }
-            ],
-            conditions: [
-                { title: 'Настенные кондеи', link: '/category/3' },
-                { title: 'Мобильные кондеи', link: '/category/4' }
-            ],
-            air_items: [
-                { title: 'Бытовые вентиляторы', link: '/category/5' },
-                { title: 'Электрические вентиляторы', link: '/category/6' }
-            ],
-        })
+            rootCategories: []
+        }),
+        beforeCreate() {
+            axios.get(getURL('categories'), {withCredentials: true})
+                .then(response => {
+                    this.rootCategories = response.data;
+                })
+        }
     }
 </script>
 

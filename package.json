@@ -8,8 +8,12 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@bchteam/vue-jivosite": "^1.0.0",
+    "axios": "^0.25.0",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
+    "vue-infinite-loading": "^2.4.5",
+    "vue-inner-image-zoom": "^2.0.0",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0"
   },
