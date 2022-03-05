@@ -1,6 +1,6 @@
 
 export const is_debug = true;
-export const endpoint = 'localhost:8000';
+export const endpoint = '85.193.83.131:8000';
 export const schema = 'http';
 export const endpoint_version = 'v1';
 

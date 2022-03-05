@@ -7,7 +7,7 @@
 <script>
     export default {
         name: "BreadCrumbs",
-        props: ['crumbs']
+        props: ['crumbs'],
     }
 </script>
 
