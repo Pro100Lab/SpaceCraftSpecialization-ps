@@ -1,7 +1,7 @@
 <template>
-    <v-sheet color="transparent" class="my-4 category__all-controls">
+    <v-sheet color="transparent" class="category__all-controls">
         <v-card>
-            <BreadCrumbs class="my-4" v-bind:crumbs="breadCrumbs"></BreadCrumbs>
+            <BreadCrumbs v-bind:crumbs="breadCrumbs"></BreadCrumbs>
         </v-card>
         <v-card>
             <v-row class="mt-4">
@@ -52,9 +52,31 @@
                     <v-card-title class="my-2">
                         {{ this.title }}
                     </v-card-title>
-                    <v-card-title class="my-2">
+                    <v-card-title class="mt-2">
                         <span><strong>{{price}} Руб.</strong></span>
                     </v-card-title>
+                    <v-row class="mx-3">
+                        <v-checkbox label="Требуется установка (+ 10 000 Руб)"/>
+                        <v-tooltip top>
+                            <template v-slot:activator="{on, attrs}">
+                                <v-icon
+                                        v-on="on"
+                                        v-bind="attrs"
+                                        class="mx-2"
+                                        small
+                                        dense
+                                >
+                                    mdi-help-circle
+                                </v-icon>
+                            </template>
+                            <span>
+                            Базовый набор: 2 метра колючей проволоки + Работа мастера
+                        </span>
+                        </v-tooltip>
+                    </v-row>
+                    <v-row class="mx-4 mt-0 mb-2 d-flex flex-row align-center" style="font-size: 0.8rem; display: inline">
+                        Обратите внимание, цена установки указана за <a href="/category/2">базовый набор.</a> Конечная цена складывается из необходимых расходных материалов
+                    </v-row>
                     <v-card-subtitle>
                         {{ this.description }}
                     </v-card-subtitle>

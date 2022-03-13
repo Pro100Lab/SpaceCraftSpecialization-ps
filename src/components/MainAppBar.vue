@@ -1,9 +1,8 @@
 <template>
-    <v-card height="5rem">
+    <v-card>
     <v-toolbar elevation="0"
-               class="mx-auto py-4"
-               width="60%"
-               height="auto"
+               class="mx-auto"
+               style="width: 60%"
     >
         <a href="/">
             <v-avatar tile >
@@ -15,11 +14,12 @@
             </v-avatar>
         </a>
 
-        <v-toolbar-title class="mx-4 mt-2 text-center">
+        <v-toolbar-title class="mx-4 text-center">
             Флагман
         </v-toolbar-title>
         <v-spacer/>
         <SearchBar/>
+        <v-spacer/>
         <div class="mx-4 text-center">
             <v-menu offset-y link>
                 <template v-slot:activator="{ on, attrs }">
@@ -90,8 +90,9 @@
                 Рассчитать мощность
             </span>
         </v-tooltip>
-        <v-spacer/>
+
         </v-toolbar>
+
         <v-overlay
                 style="position:fixed;"
                 :value="showCallView"
@@ -101,16 +102,16 @@
         </v-overlay>
 
         <v-card style="width: 30%; height: 40%; position: fixed; bottom:30%; left:35%; z-index: 100" v-if="showCallView">
-        <v-card-title class="justify-center">
-            Заказать обратный звонок
-        </v-card-title>
+            <v-card-title class="justify-center">
+                Заказать обратный звонок
+            </v-card-title>
 
-        <v-form class="mt-2 mx-8" v-model="callOpts.valid">
+            <v-form class="mt-2 mx-8" v-model="callOpts.valid">
                 <v-text-field
-                    label="Введите ваше имя"
-                    v-model="callOpts.name"
-                    :rules="callOpts.nameRule"
-                    required
+                        label="Введите ваше имя"
+                        v-model="callOpts.name"
+                        :rules="callOpts.nameRule"
+                        required
                 >
                 </v-text-field>
                 <v-text-field
@@ -123,9 +124,13 @@
                 </v-text-field>
             </v-form>
             <v-card-actions>
-                <v-btn :disabled="!callOpts.valid" block color="blue" v-on:click="getCall()">Отправить заявку</v-btn>
+                <v-btn :disabled="!callOpts.valid" block color="blue" v-on:click="getCall()">
+                    Отправить заявку
+                </v-btn>
             </v-card-actions>
-            <h4 class="text-center" style="color: green" v-if="callOpts.requestSent">Спасибо за заявку!<br/>Мы перезвоним вам в ближайшее время!</h4>
+            <h4 class="text-center" style="color: green" v-if="callOpts.requestSent">
+                Спасибо за заявку!<br/>Мы перезвоним вам в ближайшее время!
+            </h4>
         </v-card>
     </v-card>
 </template>

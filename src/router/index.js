@@ -22,10 +22,16 @@ const routes = [
     path: '/product/:product_id',
     name: 'Product',
     component: () => import('../views/Product')
+  },
+  {
+    path: '/compare',
+    name: 'Compare',
+    component: () => import('../views/Compare')
   }
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   base: process.env.BASE_URL,
   routes
 })

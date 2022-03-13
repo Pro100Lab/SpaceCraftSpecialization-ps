@@ -55,12 +55,19 @@
                 color="success"
                 class="mx-4 my-4"
         />
+        <div v-if="prop">
+        <v-divider/>
+            <v-btn color="blue" block class="elevation-0 mx-4 my-4">
+                Применить
+            </v-btn>
+        </div>
     </v-card>
 </template>
 
 <script>
     export default {
         name: "CalculateStackPanel",
+        props: ['prop'],
         data: () => {
            return {
                square: null,

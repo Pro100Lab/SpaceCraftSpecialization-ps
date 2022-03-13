@@ -1,9 +1,8 @@
 <template>
-    <v-card dark height="4rem">
+    <v-card dark>
     <v-toolbar elevation="0"
+               class="mx-auto transparent"
                dark
-               color="transparent"
-               class="mx-auto"
                width="60%"
     >
         <div class="text-center" v-for="root in rootCategories" :key="root.id">
@@ -28,7 +27,7 @@
                             link
                             :to="`/category/${child.id}`"
                     >
-                        <v-list-item-title>{{ child.title }}</v-list-item-title>
+                        <v-list-item-title >{{ child.title }}</v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>

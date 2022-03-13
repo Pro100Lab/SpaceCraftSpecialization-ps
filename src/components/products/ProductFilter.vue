@@ -5,9 +5,13 @@
         </v-card-title>
         <v-col class="px-4">
             <v-list>
-                <v-list-item v-for="filter of this.rangers" :key="filter.id" style="max-height: 100px; border: solid 1px gray; border-radius: 3px"
+                <v-list-item v-for="filter of this.rangers" :key="filter.id" style="max-height: 120px; border: solid 1px gray; border-radius: 3px"
                              class="d-flex flex-column align-start my-1">
                     <v-subheader class="text-center my-1">{{filter.name}}</v-subheader>
+                    <a class="mb-2 px-4" style="font-size: 0.9rem"
+                            v-if="filter.name === 'Мощность охлаждения, кВт'"
+                            v-on:click="eventBus.$emit('stack-panel-open', 'calculate', {'button': 'Применить'})"
+                    >Рассчитать</a>
                     <v-row>
                             <v-text-field
                                     :value="filter.range[0]"
@@ -68,10 +72,12 @@
 </template>
 
 <script>
+    import eventBus from "../../eventBus";
     export default {
         name: "ProductFilter",
         data () {
             return {
+                eventBus,
                 rangers: [],
                 checkers: []
             }

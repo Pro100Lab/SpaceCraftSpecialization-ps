@@ -1,9 +1,9 @@
 <template>
     <v-card color="white">
-        <CompareStackPanel v-if="panelName==='compare'"/>
-        <FavouriteStackPanel v-else-if="panelName==='favourite'"/>
-        <CartStackPanel v-else-if="panelName==='cart'"/>
-        <CalculateStackPanel v-else-if="panelName==='calculate'"/>
+        <CompareStackPanel v-if="panelName==='compare'" :prop="prop"/>
+        <FavouriteStackPanel v-else-if="panelName==='favourite'" :prop="prop"/>
+        <CartStackPanel v-else-if="panelName==='cart'" :prop="prop"/>
+        <CalculateStackPanel v-else-if="panelName==='calculate'" :prop="prop"/>
     </v-card>
 </template>
 
@@ -15,7 +15,7 @@
     export default {
         name: "StackPanel",
         components: {CalculateStackPanel, CartStackPanel, FavouriteStackPanel, CompareStackPanel},
-        props: ['panelName']
+        props: ['panelName', 'prop']
     }
 </script>
 

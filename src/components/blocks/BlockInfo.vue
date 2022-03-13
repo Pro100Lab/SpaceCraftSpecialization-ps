@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card class="rounded-0">
         <v-card-title>
         {{title}}
         </v-card-title>

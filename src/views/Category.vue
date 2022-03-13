@@ -1,39 +1,43 @@
 <template>
-    <v-sheet color="transparent" class="my-4 category__all-controls">
-        <v-card color="white" >
-            <BreadCrumbs v-bind:crumbs="this.breadCrumbs"></BreadCrumbs>
-            <BlockInfo v-if="title && description" v-bind="{title, description}"/>
-        </v-card>
-        <div class="d-flex justify-start flex-row">
-        <CategoryGrid v-if="categories.length > 0"
-                      v-bind="{categories, gridCols: 5}"
-        />
-        </div>
+    <v-sheet color="transparent" class="category__all-controls">
         <v-row>
-            <v-col cols="4">
+            <v-col class="fill-height">
+                <v-card color="white" style="width: 100%" >
+                    <BreadCrumbs v-bind:crumbs="this.breadCrumbs"></BreadCrumbs>
+                    <BlockInfo v-if="title && description" v-bind="{title, description}"/>
+                </v-card>
+            </v-col>
+        </v-row>
+        <v-row class="d-flex justify-start flex-row">
+        <CategoryGrid v-if="categories.length > 0"
+                      v-bind="{categories}"
+        />
+        </v-row>
+        <v-row v-if="categories.length === 0">
+            <v-col cols="3">
             <ProductFilter
                     v-if="hasFilters"
-                    class="mt-3"
                     v-bind="{filters: this.filters, applyFilter}"
                     id="product_filter"
                     style="min-width: 25%; min-height: 35rem"/>
             </v-col>
-            <v-col cols="8">
-            <div v-for="(products, $index) in productsGroups" :key="$index" class="d-flex flex-column">
-                <ProductsGrid
-                        class="ml-10"
-                        v-bind="{
-                                gridCols: hasFilters ? 3 : 4,
-                                onProductView: onProductView,
-                                products: products,
-                                actions: { productToCart: productToCart,
-                                           productToCompare: productToCompare,
-                                           productToFavourite: productToFavourite
-                                },
-                                favouriteIds,
-                                compareIds
-                }"/>
-            </div>
+            <v-col cols="9" >
+                <div ref="productsColsRef" >
+                <ProductPresets v-if="showPresets"/>
+                <div v-for="(products, $index) in productsGroups" :key="$index">
+                    <ProductsGrid
+                            v-bind="{
+                                    onProductView: onProductView,
+                                    products: products,
+                                    actions: { productToCart: productToCart,
+                                               productToCompare: productToCompare,
+                                               productToFavourite: productToFavourite
+                                    },
+                                    favouriteIds,
+                                    compareIds
+                    }"/>
+                </div>
+                </div>
             <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
             </v-col>
             <v-dialog
@@ -59,6 +63,7 @@
     import BlockInfo from "../components/blocks/BlockInfo";
     import CategoryGrid from "../components/category/CategoryGrid";
     import InfiniteLoading from 'vue-infinite-loading';
+    import ProductPresets from "../components/products/ProductPresets";
 
     export default {
         name: "Category",
@@ -77,8 +82,11 @@
             title: '',
             description: '',
             categories: [],
-            infiniteId: +new Date(),
-            filterProps: []
+            infiniteId: + new Date(),
+            filterProps: [],
+            presetsInfo: {},
+            presetsFilters: {sorting: null, pageSize: 20, displayFormat: 'grid', displayPages: 'scroll'},
+            showPresets: false
         }),
         methods: {
           onProductView(id) {
@@ -110,7 +118,7 @@
             infiniteHandler($state) {
                 axios.post(getURL(`category/${this.$route.params.category_id}`),
                     {
-                        pageSize: 18,
+                        pageSize: 20,
                         offset: this.page,
                         filter: this.filterProps
                     }, {withCredentials: true})
@@ -129,12 +137,28 @@
                             $state.complete();
                         }
                     });
-            },
+            }
         },
         beforeMount() {
             eventBus.$on('stack-panel-open', () => {
                 this.dialogInfo.show = false;
             });
+
+            eventBus.$on('sorting-changed', (sorting) => {
+                this.presetsFilters.sorting = sorting;
+            })
+
+            eventBus.$on('page-size-changed', (pageSize) => {
+                this.presetsFilters.pageSize = pageSize;
+            })
+
+            eventBus.$on('page-display-changed', (displayPages) => {
+                this.presetsFilters.displayPages = displayPages;
+            })
+
+            eventBus.$on('display-format-changed', (displayFormat) => {
+                this.presetsFilters.displayFormat = displayFormat;
+            })
 
             eventBus.$on('product-updated', (id, type) => {
                 console.log('product updated: ', id, type);
@@ -159,7 +183,7 @@
 
             axios.post(getURL(`category/${this.$route.params.category_id}`),
                 {
-                    pageSize: 18,
+                    pageSize: 20,
                     offset: this.page
                 }, {withCredentials: true})
                 .then(response => {
@@ -172,14 +196,16 @@
                     this.favouriteIds = category_info.favourite_ids || [];
                     this.compareIds = category_info.compare_ids || [];
                     this.hasFilters = Object.keys(this.filters).length > 0;
-
+                    this.showPresets = category_info.products_info.length > 0;
                     const block_info = category_info.block_info;
                     this.title = block_info.title;
                     this.description = block_info.description;
                     this.categories = category_info.categories;
                 });
         },
-        components: {CategoryGrid, BlockInfo, ProductView, ProductsGrid, ProductFilter, BreadCrumbs, InfiniteLoading}
+        components: {
+            ProductPresets,
+            CategoryGrid, BlockInfo, ProductView, ProductsGrid, ProductFilter, BreadCrumbs, InfiniteLoading}
     }
 </script>
 

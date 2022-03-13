@@ -50,13 +50,35 @@
                         </span>
                         </v-tooltip>
                     </v-card-actions>
-                    <v-card-title class="my-2">
+                    <v-card-title class="my-2 text-break">
                         {{ this.title }}
                     </v-card-title>
-                    <v-card-title class="my-2">
+                    <v-card-title class="mt-2">
                         <span><strong>{{price}} Руб.</strong></span>
                     </v-card-title>
-                    <v-card-subtitle>
+                    <v-row class="mx-3">
+                        <v-checkbox label="Требуется установка (+ 10 000 Руб)"/>
+                        <v-tooltip top>
+                            <template v-slot:activator="{on, attrs}">
+                            <v-icon
+                                    v-on="on"
+                                    v-bind="attrs"
+                                    class="mx-2"
+                                    small
+                                    dense
+                            >
+                                mdi-help-circle
+                            </v-icon>
+                            </template>
+                            <span>
+                                Базовый набор: 2 метра колючей проволоки + Работа мастера
+                            </span>
+                        </v-tooltip>
+                    </v-row>
+                    <v-row class="mx-4 mt-0 mb-2 d-flex flex-row align-center" style="font-size: 0.8rem; display: inline">
+                        Обратите внимание, цена установки указана за <a href="/category/2">базовый набор.</a> Конечная цена складывается из необходимых расходных материалов
+                    </v-row>
+                    <v-card-subtitle class="text-break">
                         {{ this.description }}
                     </v-card-subtitle>
                     <v-btn class="rounded-t-0" color="blue" block v-on:click="onCartClicked()"

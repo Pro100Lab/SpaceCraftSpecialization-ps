@@ -1,9 +1,10 @@
 <template>
     <v-container class="elevation-0" color="transparent">
         <div v-if="products.length > 0">
-            <v-row v-for="row of this.productRows" :key="`row-${row.idx}`" class="d-flex flex-row float-left">
-                <v-col v-for="product of row.col" :key="`col-${product.id}`" class="d-flex flex-row">
-                    <ProductCard v-bind="{
+            <v-row v-for="row of this.productRows" :key="`row-${row.idx}`" class="d-flex flex-row">
+                <v-col v-for="product of row.col" :key="`col-${product.id}`" class="d-flex flex-row" cols="3">
+                    <ProductCard
+                            v-bind="{
                          id: product.id,
                          title: product.title,
                          description: product.description,

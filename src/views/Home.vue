@@ -1,5 +1,5 @@
 <template>
-    <div class="main__view my-4">
+    <div class="main__view">
         <v-carousel hide-delimiters height="100%" class="elevation-4">
           <v-carousel-item :src="require('../assets/free_banner.png')" contain>
           </v-carousel-item>
