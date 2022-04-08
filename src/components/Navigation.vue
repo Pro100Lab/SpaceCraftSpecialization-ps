@@ -45,8 +45,12 @@
             return {
                 items: [
                     { title: 'Панель состояния', icon: 'mdi-speedometer', link: '/' },
-                    { title: 'Каталог', icon: 'mdi-format-list-bulleted-square', link: '/catalog/product' },
-                    { title: 'Продажи', icon: 'mdi-cart-variant', link: '/orders' }
+                    { title: 'Блоки', icon: 'mdi-clipboard-list-outline', link: '/blocks' },
+                    { title: 'Информация', icon: 'mdi-alert-box', link: '/information' },
+                    { title: 'Категории', icon: 'mdi-shape', link: '/category' },
+                    { title: 'Каталог', icon: 'mdi-format-list-bulleted-square', link: '/products' },
+                    { title: 'Продажи', icon: 'mdi-cart-variant', link: '/orders' },
+                    { title: 'Контент', icon: 'mdi-image', link: '/content' }
                 ],
                 right: null,
             }

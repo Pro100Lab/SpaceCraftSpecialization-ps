@@ -1,27 +1,25 @@
 <template>
   <v-app>
     <AdminBar class="app-bar"/>
-    <v-row class="main-app">
       <Navigation class="main-nav fill-height" />
-      <v-main class="mx-10">
+      <v-main class="mx-10 main-app">
         <router-view/>
       </v-main>
-    </v-row>
-
   </v-app>
 </template>
 
 <style scoped lang="scss">
     .main-app {
-      padding-left: 15%;
-      padding-top: 8rem;
+      position: absolute;
+      width: 80vw;
+      left: 15vw;
+      top: 5rem;
     }
 
   .main-nav {
-    width: 20%;
-    position: fixed;
-    top: 0;
-    padding-top: 4rem;
+    position: absolute;
+    top: 4rem;
+    max-width: 15vw;
     left: 0;
   }
 
