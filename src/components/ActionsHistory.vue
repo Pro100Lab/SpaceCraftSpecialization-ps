@@ -8,16 +8,19 @@
         </v-card-title>
         <v-list>
             <v-list-item v-for="node of history" :key="node.id">
-                <v-row>
+                <v-row class="d-flex flex-row justify-center align-center">
                     <v-col cols="2">
                         <v-icon>
                             mdi-account
                         </v-icon>
                     </v-col>
-                    <v-col cols="10">
-                        <v-card-text>
+                    <v-col cols="6">
+                        <v-card-title>
                             {{node.type}}: {{node.name}}
-                        </v-card-text>
+                        </v-card-title>
+                    </v-col>
+                    <v-col cols="4">
+                    <v-card-subtitle>{{node.date}}</v-card-subtitle>
                     </v-col>
                 </v-row>
             </v-list-item>
@@ -33,8 +36,9 @@
                 history: [
                     {
                         id: 0,
-                        name: "Главный администратор",
-                        type: "Вход"
+                        name: "Admin",
+                        type: "Вход",
+                        date: '2023.04.24'
                     }
                 ]
             }

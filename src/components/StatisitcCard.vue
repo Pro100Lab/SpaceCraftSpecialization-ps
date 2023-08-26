@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="0" style="background-color: lightblue; border-radius: 7px" class="card-gradient">
+    <v-card style="background-color: lightblue; border-radius: 7px" class="card-gradient ">
         <v-card-actions style="background-color: rgba(0, 51, 204, 0.3); height: 40px">
         <v-card-title style="color: white; font-size: 18px">
             {{title}}
@@ -33,7 +33,7 @@
     .card-gradient {
         background: linear-gradient(
                 rgba(0, 51, 204, 0.5),
-                rgba(51, 204, 255, 0.5),
+                rgba(51, 204, 255, 0.3),
                 rgba(153, 204, 255, 0.5)
         )
     }
