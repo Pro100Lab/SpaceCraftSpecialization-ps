@@ -1,28 +1,22 @@
 <template>
-    <v-card class="fill-height">
-        <v-card-title>
-            Избранные товары
-        </v-card-title>
-        <v-divider class="my-2"/>
-
+    <v-card class="fill-height elevation-0" color="white">
         <div class="mx-4" v-if="products && products.length > 0">
             <v-virtual-scroll
                     :bench="20"
                     :items="products"
                     height="800"
-                    item-height="170"
+                    item-height="200"
                     style="overflow-x: hidden"
             >
                 <template v-slot:default="{ item }">
                     <v-list-item :key="item.id">
                         <v-row style="width: 100%">
                             <v-col cols="10">
-                                <ProductHCard
+                                <HorizontalCard
                                         v-bind="{
                                 idx: item.id,
                                 title: item.title,
                                 price: item.price,
-                                amount: item.amount,
                                 source: item.images[0]
                                 }"/>
                             </v-col>
@@ -61,13 +55,13 @@
 
 <script>
     import axios from 'axios';
-    import {getURL} from "../../settings";
-    import ProductHCard from "../products/ProductHCard";
-    import eventBus from "../../eventBus";
+    import {getURL} from "../../utils/settings";
+    import HorizontalCard from "../products/HorizontalCard";
+    import eventBus from "../../utils/eventBus";
 
     export default {
         name: "FavouriteStackPanel",
-        components: {ProductHCard},
+        components: {HorizontalCard},
         data() {
             return {
                 products: [],

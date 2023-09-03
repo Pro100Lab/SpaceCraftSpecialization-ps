@@ -1,9 +1,5 @@
 <template>
-    <v-card class="fill-height">
-        <v-card-title>
-            Сравнение товаров
-        </v-card-title>
-        <v-divider/>
+    <v-card class="fill-height" color="white">
         <div class="mx-4" v-if="products && products.length > 0">
             <v-virtual-scroll
                     :bench="20"
@@ -16,7 +12,7 @@
                     <v-list-item :key="item.id">
                         <v-row style="width: 100%">
                             <v-col cols="10">
-                                <ProductHCard
+                                <HorizontalCard
                                         v-bind="{
                                 idx: item.id,
                                 title: item.title,
@@ -59,14 +55,14 @@
 </template>
 
 <script>
-    import ProductHCard from "../products/ProductHCard";
-    import {getURL, normalizePrice} from "../../settings";
+    import HorizontalCard from "../products/HorizontalCard";
+    import {getURL, normalizePrice} from "../../utils/settings";
     import axios from 'axios';
-    import eventBus from "../../eventBus";
+    import eventBus from "../../utils/eventBus";
 
     export default {
         name: "CompareStackPanel",
-        components: {ProductHCard},
+        components: {HorizontalCard},
         data: () => {
             return {
                 products: []

@@ -1,48 +1,56 @@
 <template>
-    <v-container class="elevation-0" color="transparent">
-        <div v-if="products.length > 0">
-            <v-row v-for="row of this.productRows" :key="`row-${row.idx}`" class="d-flex flex-row">
-                <v-col v-for="product of row.col" :key="`col-${product.id}`" class="d-flex flex-row" cols="3">
-                    <ProductCard
-                            v-bind="{
-                         id: product.id,
-                         title: product.title,
-                         description: product.description,
-                         images: product.images,
-                         price: product.price,
-                         actions: {...actions, onHeartClick, onAbacusClick, onCartClick, onProductView, goToProduct},
-                         favourite: favouriteIds.indexOf(product.id) !== -1,
-                         compare: compareIds.indexOf(product.id) !== -1
-                         }"/>
-                </v-col>
-            </v-row>
-        </div>
-    </v-container>
+    <v-col v-if="products.length > 0" class="px-0">
+        <v-row v-for="row of this.productRows" :key="`row-${row.idx}`" class="d-flex flex-row">
+            <v-col v-for="product of row.col" :key="`col-${product.id}`" class="d-flex flex-row"
+                   :cols="row.col.length === gridCols ? 12/gridCols : 12/row.col.length">
+                <Card
+                        v-bind="{
+                     id: product.id,
+                     title: product.title,
+                     description: product.description,
+                     images: product.images,
+                     width: cardWidth,
+                     price: product.price,
+                     specialPrice: product.specialPrice,
+                     sale: product.sale,
+                     salePercent: product.salePercent,
+                     actions: {...actions, onHeartClick, onAbacusClick, onCartClick, onProductView, goToProduct},
+                     favourite: favouriteIds.indexOf(product.id) !== -1,
+                     compare: compareIds.indexOf(product.id) !== -1}"
+                        :style="{'width': '100%'}"
+
+                />
+            </v-col>
+        </v-row>
+    </v-col>
 </template>
 
 <script>
-    import eventBus from "../../eventBus";
-    import {normalizePrice} from "../../settings";
-    import ProductCard from "./ProductCard";
+    import eventBus from "../../utils/eventBus";
+    import {normalizePrice} from "../../utils/settings";
+    import Card from "./Card";
 
     export default {
         name: "ProductsGrid",
-        components: {ProductCard},
+        components: {Card},
         data: () => ({
             eventBus,
             productRows: [],
         }),
-        props: ['gridCols','onProductView','products', 'actions', 'favouriteIds', 'compareIds'],
+        props: ['gridCols', 'cardWidth', 'windowWidth', 'onProductView','products', 'actions', 'favouriteIds', 'compareIds'],
         mounted() {
             if (this.products && this.products.length > 0) {
                 this.productRows = this.getProductRows();
-            } else {
-                const unwatch = this.$watch('products', () => {
-                    if (!this.products) return;
-                    this.productRows = this.getProductRows();
-
-                    unwatch();
-                })
+            }
+        },
+        watch: {
+          products(value) {
+              if (!this.products) return;
+              this.products = value;
+                this.productRows = this.getProductRows();
+          },
+            gridCols() {
+              this.productRows = this.getProductRows();
             }
         },
         methods: {
@@ -51,15 +59,12 @@
             },
             onHeartClick: function(id) {
               const idInArray = this.favouriteIds.indexOf(id);
-              console.log('favourite ids before: ', this.favouriteIds);
               if( idInArray !== -1 ) {
                   this.favouriteIds.splice(idInArray, 1);
               } else {
                   this.favouriteIds.push(id);
                   this.onItemClick('Товар добавлен в избранное', 'открыть избранное', 'favourite');
               }
-                console.log('favourite ids after: ', this.favouriteIds);
-
               this.actions.productToFavourite(id);
             },
             onAbacusClick: function(id) {

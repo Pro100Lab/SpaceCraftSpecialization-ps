@@ -1,10 +1,20 @@
 <template>
-    <v-card class="fill-height">
-        <transition name="slide-fade">
-            <div v-if="!this.isOrdering">
-                <v-card-title>
-                    Корзина с товарами
-                </v-card-title>
+    <v-card id='cart-card' ref="cartCard" class="fill-height elevation-0 overflow-x-hidden" color="white">
+        <transition  name="slide-fade" mode="out-in">
+            <div id="order-cart-info" ref="orderCartInfo" v-if="!this.isOrdering" key="cart">
+                <v-card-actions>
+                    <v-card-title>
+                        Корзина
+                    </v-card-title>
+                    <v-spacer/>
+                    <v-btn v-on:click="eventBus.$emit('stack-panel-close')"
+                           class="transparent elevation-0">
+                        Закрыть
+                        <v-icon>
+                            mdi-close
+                        </v-icon>
+                    </v-btn>
+                </v-card-actions>
                 <v-divider/>
                 <div class="mx-2" v-if="products && products.length > 0">
                     <v-virtual-scroll
@@ -12,14 +22,14 @@
                             :items="products"
                             height="700"
                             width="100%"
-                            item-height="150"
+                            item-height="200"
                             style="overflow-x: hidden"
                     >
                         <template v-slot:default="{ item }">
                             <v-list-item :key="item.id">
                                 <v-row style="width: 100%">
                                     <v-col cols="9">
-                                        <ProductHCard
+                                        <HorizontalCard
                                                 v-bind="{
                                         idx: item.id,
                                         title: item.title,
@@ -92,28 +102,27 @@
                         </template>
                     </v-virtual-scroll>
                     <v-divider/>
-                    <v-row style="width: 100%" class="mt-4 d-flex flex-row justify-center align-center">
+                    <v-row style="width: 100%" class="d-flex flex-row justify-center align-center">
                         <v-card-title>Итого: {{normalizePrice(totalPrice)}} руб.</v-card-title>
                         <v-spacer/>
-                        <v-btn color="blue" v-on:click="isOrdering = true">Оформить заказ<v-icon>mdi-chevron-right</v-icon></v-btn>
+                        <v-btn color="blue" v-on:click="toOrdering()">Оформить заказ<v-icon>mdi-chevron-right</v-icon></v-btn>
                     </v-row>
                 </div>
             </div>
-        </transition>
-
-        <transition name="slide-fade">
-            <div v-if="this.isOrdering">
-                <v-card-title>
-                    Оформление заказа на сумму {{normalizePrice(totalPrice)}} Руб.
+            <div key="ordering" id="order-user-info" ref="orderUserInfo" v-if="this.isOrdering">
+                <v-card-actions>
+                    <v-card-title>
+                        Оформление заказа на сумму {{normalizePrice(totalPrice)}} Руб.
+                    </v-card-title>
                     <v-spacer/>
-                    <v-btn class="transparent" elevation="0" v-on:click="isOrdering = false">
+                    <v-btn class="transparent" elevation="0" v-on:click="toCart()">
                         Назад
                         <v-icon>
                             mdi-chevron-right
                         </v-icon>
                     </v-btn>
-                </v-card-title>
 
+                </v-card-actions>
                 <v-divider/>
                 <div class="mx-2" v-if="products && products.length > 0">
                     <v-card-title>
@@ -127,65 +136,46 @@
                             lazy-validation
                     >
                         <v-text-field
-                            required
-                            label="Имя"
-                            :rules="[v => !!v || 'Обязательное поле']"
-                            v-model="requisites.firstName"
-                        />
-                        <v-text-field
-                                label="Фамилия"
-                                v-model="requisites.lastName"
+                                label="Имя"
+                                v-model="requisites.firstName"
                         />
                         <v-text-field
                                 required
                                 label="Телефон"
                                 :rules="[v => !!v || 'Обязательное поле']"
                                 v-model="requisites.phone"
-
-                        />
-                        <v-text-field
-                                label="Почта"
-                                v-model="requisites.email"
-
-                        />
-                        <v-text-field
-                                required
-                                label="Адрес"
-                                :rules="[v => !!v || 'Обязательное поле']"
-                                v-model="requisites.address"
-
                         />
                     </v-form>
                     <v-divider/>
-                    <v-card-title>
-                        Способы оплаты
-                    </v-card-title>
-                    <v-radio-group
-                            class="mx-4"
-                            :error-messages="radioError"
-                            v-model="requisites.paymentMethod">
-                        <v-radio v-for="method of paymentMethods"
-                                 :key="method.id"
-                                 :label="method.value"
-                                 :value="method.value"
-                                 :readonly="method.disabled"
-                                 :ripple="true"
-                                 :color="method.disabled ? 'gray' : 'black'"
-                        >
+<!--                    <v-card-title>-->
+<!--                        Способы оплаты-->
+<!--                    </v-card-title>-->
+<!--                    <v-radio-group-->
+<!--                            class="mx-4"-->
+<!--                            :error-messages="radioError"-->
+<!--                            v-model="requisites.paymentMethod">-->
+<!--                        <v-radio v-for="method of paymentMethods"-->
+<!--                                 :key="method.id"-->
+<!--                                 :label="method.value"-->
+<!--                                 :value="method.value"-->
+<!--                                 :readonly="method.disabled"-->
+<!--                                 :ripple="true"-->
+<!--                                 :color="method.disabled ? 'gray' : 'black'"-->
+<!--                        >-->
 
-                        </v-radio>
-                    </v-radio-group>
-                    <v-divider/>
+<!--                        </v-radio>-->
+<!--                    </v-radio-group>-->
+<!--                    <v-divider/>-->
                     <v-textarea class="mx-4"
-                        v-model="requisites.comment"
-                        label="Комментарий к заказу"
+                                v-model="requisites.comment"
+                                label="Комментарий к заказу"
                     >
                     </v-textarea>
                     <v-divider/>
-                    <v-row style="width: 100%" class="mt-4 d-flex flex-row justify-center align-center">
+                    <v-card-actions>
                         <v-spacer/>
-                        <v-btn color="blue" v-on:click="validateAndOrder()">Подтвердить заказ</v-btn>
-                    </v-row>
+                        <v-btn block color="blue" v-on:click="validateAndOrder()">Подтвердить заказ</v-btn>
+                    </v-card-actions>
                 </div>
             </div>
         </transition>
@@ -198,12 +188,13 @@
 
 <script>
     import axios from 'axios';
-    import {getURL, normalizePrice} from "../../settings";
-    import ProductHCard from "../products/ProductHCard";
+    import {getURL, normalizePrice} from "../../utils/settings";
+    import HorizontalCard from "../products/HorizontalCard";
+    import eventBus from "../../utils/eventBus";
 
     export default {
         name: "CartStackPanel",
-        components: {ProductHCard},
+        components: {HorizontalCard},
         data() {
             return {
                 products: [],
@@ -216,20 +207,21 @@
                   comment: '',
                 paymentMethod: '',
                 },
+                eventBus,
                 totalPrice: null,
                 isOrdering: false,
                 paymentMethods: [{
                     id: 0,
-                    value: 'Наличными при получении (временно не доступно)',
-                    disabled: true
+                    value: 'Наличными при получении',
+                    disabled: false
                 }, {
                     id: 1,
                     value: 'Картой при получении',
                     disabled: false
                 }, {
                     id: 2,
-                    value: 'Онлайн оплата',
-                    disabled: false
+                    value: 'Онлайн оплата (временно не доступно)',
+                    disabled: true
                 }],
                 comment: '',
                 valid: false,
@@ -257,6 +249,7 @@
                     })
             },
             loadCart() {
+                eventBus.$emit('update-main-bar');
                 axios.get(getURL('session/products/Cart'), {withCredentials: true}).then(
                     response => {
                         const productsData = response.data;
@@ -264,6 +257,14 @@
                         this.totalPrice = productsData.total_price;
                     }
                 )
+            },
+            toOrdering() {
+                this.isOrdering = true;
+                this.eventBus.$emit('show-actions-changed', false);
+            },
+            toCart() {
+                this.isOrdering = false;
+                this.eventBus.$emit('show-actions-changed', true);
             },
             validateAndOrder() {
                 this.$refs.form.validate();
@@ -276,6 +277,7 @@
                         total: this.totalPrice
                     }, {withCredentials: true}).then(()=> {
                         this.loadCart();
+                        this.toCart();
                     })
                 }
             }

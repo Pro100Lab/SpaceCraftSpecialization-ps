@@ -1,20 +1,27 @@
 {
-  "name": "condition",
+  "name": "GalaxyHotels",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "vue-cli-service serve --mode development",
+    "serve-prod": "vue-cli-service serve --mode production",
+    "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@bchteam/vue-jivosite": "^1.0.0",
+    "@mdi/font": "^7.2.96",
     "axios": "^0.25.0",
     "core-js": "^3.6.5",
+    "gsap": "^3.11.4",
+    "tiny-slider": "^2.9.4",
     "vue": "^2.6.11",
     "vue-infinite-loading": "^2.4.5",
-    "vue-inner-image-zoom": "^2.0.0",
+    "vue-inner-image-zoom": "^1.1.1",
     "vue-router": "^3.2.0",
+    "vue-yandex-maps": "^0.11.13",
+    "vue-zoom-on-hover": "^1.0.6",
+    "vueperslides": "^2.16.0",
     "vuetify": "^2.4.0"
   },
   "devDependencies": {

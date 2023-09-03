@@ -25,7 +25,7 @@
 </template>
 
 <script>
-    import eventBus from "../eventBus";
+    import eventBus from "../../utils/eventBus";
 
     export default {
         name: "SnackController",

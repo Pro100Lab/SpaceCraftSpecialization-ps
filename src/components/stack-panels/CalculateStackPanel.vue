@@ -1,9 +1,5 @@
 <template>
-    <v-card class="fill-height">
-        <v-card-title>
-        Калькулятор мощности кондиционера
-        </v-card-title>
-        <v-divider/>
+    <v-card class="fill-height" color="white">
         <v-form class="mx-4 mt-4">
                 <v-text-field
                     label="Площадь помещения, м²"
@@ -57,7 +53,11 @@
         />
         <div v-if="prop">
         <v-divider/>
-            <v-btn color="blue" block class="elevation-0 mx-4 my-4">
+            <v-btn
+                    color="blue"
+                    block class="elevation-0 mx-4 my-4"
+                    v-on:click="applyFilter()"
+            >
                 Применить
             </v-btn>
         </div>
@@ -65,6 +65,8 @@
 </template>
 
 <script>
+    import eventBus from "../../utils/eventBus";
+
     export default {
         name: "CalculateStackPanel",
         props: ['prop'],
@@ -93,7 +95,7 @@
                 let Q3 = 0;
 
                 if (this.square && this.height && this.sunAmount) {
-                    Q1 = this.square * this.height * this.sunAmount / 1000;
+                    Q1 = this.square.replace(',','.') * this.height.replace(',','.') * this.sunAmount / 1000;
 
                     if ( this.peopleAmount ) {
                         Q2 = 0.13 * this.peopleAmount;
@@ -106,6 +108,13 @@
 
                 let qAll = Q1 + Q2 + Q3;
                 return qAll > 0 ? Math.round(qAll * 100) / 100 : null;
+            }
+        },
+        methods: {
+            applyFilter() {
+                if(this.calculatedPower)
+                    eventBus.$emit('min-cooling-power-changed', this.calculatedPower);
+                    eventBus.$emit('stack-panel-close');
             }
         }
     }

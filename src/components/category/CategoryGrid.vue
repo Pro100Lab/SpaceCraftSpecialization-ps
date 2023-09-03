@@ -1,18 +1,21 @@
 <template>
-    <v-container class="elevation-0" color="transparent">
-        <div v-if="categories.length > 0">
-            <v-row v-for="row of this.categoriesRows" :key="`row-${row.idx}`" class="d-flex flex-row float-left">
-                <v-col v-for="category of row.col" :key="`col-${category.id}`" >
-                    <CategoryCard v-bind="{
-                        id: category.id,
-                        title: category.title,
-                         description: category.description,
-                         image: category.image,
-                         }"/>
-                </v-col>
-            </v-row>
-        </div>
-    </v-container>
+    <div v-if="categories.length > 0" class="d-flex flex-column justify-space-around">
+        <v-row v-for="row of this.categoriesRows" :key="`row-${row.idx}`" class="d-flex flex-row float-left">
+            <v-col v-for="category of row.col" :key="`col-${category.id}`"
+                   :cols="row.col.length === innerGridCols ? Math.floor(12/innerGridCols) : Math.floor(12/row.col.length)"
+                   >
+<!--                :cols="row.col.length === innerGridCols ? Math.floor(12/innerGridCols) : Math.floor(12/row.col.length)"-->
+                <CategoryCard v-bind="{
+                    id: category.id,
+                    title: category.title,
+                     description: category.description,
+                     image: category.image
+                     }"
+                    :style="{'width': '100%'}"
+                />
+            </v-col>
+        </v-row>
+    </div>
 </template>
 
 <script>
@@ -24,19 +27,15 @@
         data: () => {
             return {
                 categoriesRows: [],
-                innerGridCols: Math.floor(window.innerWidth*0.7/264)
+                innerGridCols: 6,
+                cardWidth: 180,
+                windowWidth: 1281
             }
         },
         mounted() {
+            this.calculateGridCols();
             window.addEventListener('resize', () => {
-                let windowWidth = window.innerWidth*0.7;
-                console.log('window width: ', windowWidth);
-                let shouldBeCols = Math.floor(windowWidth/264);
-                console.log('resize event, cols should be: ', shouldBeCols)
-                if (this.changeGridCols(shouldBeCols)) {
-                    console.log('grid changed')
-                    this.categoriesRows = this.getCategoriesRows();
-                }
+                this.calculateGridCols();
             });
 
             if (this.categories && this.categories.length > 0) {
@@ -50,9 +49,32 @@
                 })
             }
 
-            this.innerGridCols = this.gridCols;
+            if( this.gridCols )
+                this.innerGridCols = this.gridCols;
         },
         methods: {
+            calculateGridCols() {
+                const windowWidth = window.innerWidth;
+                console.log('window with: ', windowWidth);
+                if( windowWidth > 1280 ) {
+                    this.windowWidth = 0.7 * windowWidth + 24;
+                    this.cardWidth = this.windowWidth * 0.19;
+                }
+                if( windowWidth <= 1280 ) {
+                    this.windowWidth = 0.8 * windowWidth;
+                    this.cardWidth = this.windowWidth * 0.24;
+                }
+                if( windowWidth <= 960 ) {
+                    this.windowWidth = 0.95 * windowWidth;
+                    this.cardWidth = 0.95 * windowWidth
+                }
+
+                let shouldBeCols = Math.floor(this.windowWidth/this.cardWidth);
+                console.log('should be cols: ', shouldBeCols)
+                if (this.changeGridCols(shouldBeCols)) {
+                    this.categoriesRows = this.getCategoriesRows();
+                }
+            },
             changeGridCols(cols) {
                 if( cols !== this.innerGridCols) {
                     this.innerGridCols = cols;

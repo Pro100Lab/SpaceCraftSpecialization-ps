@@ -1,218 +1,158 @@
 <template>
-    <v-sheet color="transparent" class="category__all-controls">
+    <v-sheet color="transparent" class="bottom-bar__main-scope overflow-x-hidden">
         <v-row>
             <v-col class="fill-height">
-                <v-card color="white" style="width: 100%" >
-                    <BreadCrumbs v-bind:crumbs="this.breadCrumbs"></BreadCrumbs>
-                    <BlockInfo v-if="title && description" v-bind="{title, description}"/>
-                </v-card>
+                <BreadCrumbs id="crumbs" v-bind:crumbs="breadCrumbs"></BreadCrumbs>
+                <BlockInfo
+                        v-if="title && description"
+                        v-bind="{info: {'Type': 1, 'Description': description}, customClass: 'rounded-t-0'}"/>
             </v-col>
         </v-row>
-        <v-row class="d-flex justify-start flex-row">
-        <CategoryGrid v-if="categories.length > 0"
-                      v-bind="{categories}"
-        />
-        </v-row>
-        <v-row v-if="categories.length === 0">
-            <v-col cols="3">
-            <ProductFilter
-                    v-if="hasFilters"
-                    v-bind="{filters: this.filters, applyFilter}"
-                    id="product_filter"
-                    style="min-width: 25%; min-height: 35rem"/>
+        <v-row>
+            <v-col v-if="hasCategories">
+                <CategoryGrid v-bind="{categories}"/>
+                <category-products :runTrigger="hasCategories && hasProducts"
+                                   v-if="hasProducts" class="my-2" :crumbs="breadCrumbs"></category-products>
             </v-col>
-            <v-col cols="9" >
-                <div ref="productsColsRef" >
-                <ProductPresets v-if="showPresets"/>
-                <div v-for="(products, $index) in productsGroups" :key="$index">
-                    <ProductsGrid
-                            v-bind="{
-                                    onProductView: onProductView,
-                                    products: products,
-                                    actions: { productToCart: productToCart,
-                                               productToCompare: productToCompare,
-                                               productToFavourite: productToFavourite
-                                    },
-                                    favouriteIds,
-                                    compareIds
-                    }"/>
-                </div>
-                </div>
-            <infinite-loading :identifier="infiniteId" @infinite="infiniteHandler"></infinite-loading>
-            </v-col>
-            <v-dialog
-                v-model="dialogInfo.show"
-                max-width="70%"
-            >
-                <ProductView style="overflow-x: hidden; overflow-y: hidden;"
-                             v-if="dialogInfo.show"
-                             v-bind="{dialogInfo}"/>
-            </v-dialog>
         </v-row>
+        <v-row v-if="blocks && blocks.length > 0">
+            <v-col class="fill-height">
+                <BlockInfo
+                        v-for="(info, index) of blocks"
+                        :key="info['@Block']"
+                        v-bind="{info, customClass: rounder(index, blocks.length, true)}"/>
+            </v-col>
+        </v-row>
+
+
+        <v-row v-if="!hasCategories && hasProducts">
+            <v-col class="py-0">
+                <category-products :runTrigger="!hasCategories && hasProducts" :crumbs="breadCrumbs"></category-products>
+            </v-col>
+        </v-row>
+
     </v-sheet>
 </template>
 
 <script>
-    import BreadCrumbs from "../components/BreadCrumbs";
-    import ProductFilter from "../components/products/ProductFilter";
-    import ProductsGrid from "../components/products/ProductsGrid";
-    import ProductView from "../components/products/ProductView";
-    import {getURL} from "../settings";
+    import BreadCrumbs from "../components/utility/BreadCrumbs";
+    import {getURL} from "../utils/settings";
     import axios from 'axios';
-    import eventBus from "../eventBus";
     import BlockInfo from "../components/blocks/BlockInfo";
+    import {rounder} from "../utils/blockRoundCounter";
+    import CategoryProducts from "./category/CategoryProducts";
     import CategoryGrid from "../components/category/CategoryGrid";
-    import InfiniteLoading from 'vue-infinite-loading';
-    import ProductPresets from "../components/products/ProductPresets";
+    import eventBus from "../utils/eventBus";
 
     export default {
         name: "Category",
         data: () => ({
             breadCrumbs: [],
-            filters: {},
-            hasFilters: true,
-            dialogInfo: {
-                show: false,
-                id: 0
-            },
-            productsGroups: [],
-            page: 0,
-            favouriteIds: [],
-            compareIds: [],
             title: '',
             description: '',
             categories: [],
-            infiniteId: + new Date(),
-            filterProps: [],
-            presetsInfo: {},
-            presetsFilters: {sorting: null, pageSize: 20, displayFormat: 'grid', displayPages: 'scroll'},
-            showPresets: false
+            blocks: [],
+            loaded: false,
         }),
+        computed: {
+          hasProducts: function () {
+              console.log('has products: ', this.$route.params.category_id > 3, this.$route.params.category_id)
+            return this.loaded ? this.$route.params.category_id > 3 && this.$route.params.category_id < 22 : false;
+          },
+        hasCategories: function () {
+            console.log('has categories: ', this.categories.length)
+
+            return this.loaded ? this.categories.length : false;
+        },
+        },
         methods: {
-          onProductView(id) {
-              this.dialogInfo.id = id;
-              this.dialogInfo.show = true;
+            calculateGridCols() {
+                const windowWidth = window.innerWidth;
+                this.windowWidth = windowWidth;
+                const catBlockSize = this.hasFilters ? 1 : 9/12;
+                if( windowWidth > 1536 ) {
+                    this.windowWidth = catBlockSize * 0.7 * windowWidth + 24;
+                    this.cardWidth = this.windowWidth * 0.23;
+                }
+                if( windowWidth <= 1536 ) {
+                    this.windowWidth = catBlockSize * 0.7 * windowWidth + 24;
+                    this.cardWidth = this.windowWidth / 3.1;
+                }
+                if( windowWidth <= 1280 ) {
+                    this.windowWidth = catBlockSize * 0.8 * windowWidth;
+                    this.cardWidth = this.windowWidth * 0.48;
+                }
+                if( windowWidth <= 960 ) {
+                    this.windowWidth = catBlockSize * 0.95 * windowWidth;
+                    this.cardWidth = 0.95 * this.windowWidth;
+                }
+                this.gridCols = Math.floor(this.windowWidth/this.cardWidth);
             },
-            updateProduct(placeholder, id) {
-                axios.post(getURL('product/update'), {placeholder, id}, {withCredentials: true}).then(() => {
-                    eventBus.$emit('update-main-bar');
-                });
+            async loadBlock(id) {
+                return await axios.get(getURL(`block/${id}`));
             },
-            productToFavourite(id) {
-                this.updateProduct('Favourite', id);
-            },
-            productToCompare(id) {
-                this.updateProduct('Compare', id);
-            },
-            productToCart(id) {
-                this.updateProduct('Cart', id);
-            },
-            applyFilter(props) {
-              console.log('filters updated: ');
-              console.log(props);
-                this.page = 0;
-                this.productsGroups = [];
-                this.infiniteId += 1;
-                this.filterProps = props
-            },
-            infiniteHandler($state) {
+
+            loadCategories(props) {
                 axios.post(getURL(`category/${this.$route.params.category_id}`),
                     {
-                        pageSize: 20,
-                        offset: this.page,
-                        filter: this.filterProps
+                        offset: 0,
                     }, {withCredentials: true})
-                    .then(response => {
-                        this.page += 1;
+                    .then(async response => {
                         const category_info = response.data;
-                        const products = category_info.products_info;
-                        const filters = category_info.filters_info || {};
-                        if( !this.filters || this.filters.length === 0 ) {
-                            this.filters = filters;
+                        this.breadCrumbs = category_info.breadcrumbs;
+                        const block_info = category_info.block_info;
+                        if( block_info )
+                        {
+                            this.title = block_info.title;
+                            this.description = block_info.description;
                         }
-                        if (products.length > 0) {
-                            $state.loaded();
-                            this.productsGroups.push(products);
-                        } else {
-                            $state.complete();
+                        if(!props)
+                            this.categories = category_info.categories;
+
+                        for(const blockId of block_info.blocks || []) {
+                            const blockInfo = await this.loadBlock(blockId);
+                            this.blocks.push(blockInfo.data)
                         }
+                        this.loaded = true;
                     });
-            }
+            },
+            rounder,
         },
         beforeMount() {
-            eventBus.$on('stack-panel-open', () => {
-                this.dialogInfo.show = false;
+            this.calculateGridCols();
+            window.addEventListener('resize', () => {
+                this.calculateGridCols();
             });
 
-            eventBus.$on('sorting-changed', (sorting) => {
-                this.presetsFilters.sorting = sorting;
+            this.currentPage = parseInt(this.$route.query.page || '1');
+            this.loadCategories();
+
+            eventBus.$on('crumbs-changed', crumbs=> {
+                this.breadCrumbs = crumbs;
             })
-
-            eventBus.$on('page-size-changed', (pageSize) => {
-                this.presetsFilters.pageSize = pageSize;
-            })
-
-            eventBus.$on('page-display-changed', (displayPages) => {
-                this.presetsFilters.displayPages = displayPages;
-            })
-
-            eventBus.$on('display-format-changed', (displayFormat) => {
-                this.presetsFilters.displayFormat = displayFormat;
-            })
-
-            eventBus.$on('product-updated', (id, type) => {
-                console.log('product updated: ', id, type);
-                if (type === 'compare') {
-                    const idInArray = this.compareIds.indexOf(id);
-                    if( idInArray !== -1 ) {
-                        this.compareIds.splice(idInArray, 1);
-                    } else {
-                        this.compareIds.push(id);
-                    }
-                } else if (type === 'favourite') {
-                    const idInArray = this.favouriteIds.indexOf(id);
-                    console.log('favourite ids before: ', this.favouriteIds);
-                    if( idInArray !== -1 ) {
-                        this.favouriteIds.splice(idInArray, 1);
-                    } else {
-                        this.favouriteIds.push(id);
-                    }
-                    console.log('favourite ids after: ', this.favouriteIds);
-                }
-            });
-
-            axios.post(getURL(`category/${this.$route.params.category_id}`),
-                {
-                    pageSize: 20,
-                    offset: this.page
-                }, {withCredentials: true})
-                .then(response => {
-                    this.page += 1;
-                    const category_info = response.data;
-                    const products = category_info.products_info;
-                    this.breadCrumbs = category_info.breadcrumbs;
-                    this.productsGroups.push(products);
-                    this.filters = category_info.filters_info || {};
-                    this.favouriteIds = category_info.favourite_ids || [];
-                    this.compareIds = category_info.compare_ids || [];
-                    this.hasFilters = Object.keys(this.filters).length > 0;
-                    this.showPresets = category_info.products_info.length > 0;
-                    const block_info = category_info.block_info;
-                    this.title = block_info.title;
-                    this.description = block_info.description;
-                    this.categories = category_info.categories;
-                });
         },
+
         components: {
-            ProductPresets,
-            CategoryGrid, BlockInfo, ProductView, ProductsGrid, ProductFilter, BreadCrumbs, InfiniteLoading}
+            CategoryProducts,
+            BlockInfo,
+            CategoryGrid,
+            BreadCrumbs}
     }
 </script>
 
 <style scoped >
-    .category__all-controls {
+    .bottom-bar__main-scope {
         width: 70%;
         margin: 0 auto;
     }
-
+    @media screen and (max-width: 1280px){
+        .bottom-bar__main-scope {
+            width: 85%;
+        }
+    }
+    @media screen and (max-width: 960px){
+        .bottom-bar__main-scope {
+            width: 95%;
+        }
+    }
 </style>
