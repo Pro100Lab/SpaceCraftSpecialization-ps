@@ -1,11 +1,12 @@
 <template>
-    <v-card class="rounded-0 elevation-0" color="white">
+    <v-card class="rounded-0 elevation-0" :style="cssProps">
         <div class="app-bar__main-scope mx-auto">
             <div class="d-flex align-end justify-center">
                 <!--<logo>-->
                 <div class="d-flex flex-row align-center">
-                <v-img :src="require('../../assets/logo.png')"
-                       alt="Галактика. Хостел и гостиница"
+                <v-img :src="logo.image"
+                       v-if="logo.image"
+                       alt="SpaceCraftImage"
                        v-on:click="goToMain()"
                        contain
                        class="app-bar__adaptive-icons"
@@ -14,11 +15,15 @@
 
                 <!--</logo>-->
                 <div class="d-flex flex-column">
-                    <v-card-title class="app-bar__adaptive-title">
-                        Галактика
+                    <v-card-title class="app-bar__adaptive-title"
+                                  v-html="logo.title"
+                                  v-if="logo.title">
                     </v-card-title>
-                    <v-card-subtitle class="app-bar__adaptive-subtitle">
-                        Hostel | Hotel
+                    <v-card-subtitle
+                            class="app-bar__adaptive-subtitle"
+                            v-html="logo.subtitle"
+                            v-if="logo.subtitle"
+                    >
                     </v-card-subtitle>
                 </div>
                 </div>
@@ -91,6 +96,7 @@
     import {normalizePrice, getURL} from "../../utils/settings";
     import eventBus from "../../utils/eventBus";
     import * as profile from "../../utils/profile";
+    import loader from "../../utils/customizeOptions";
 
     export default {
         name: "MainAppBar",
@@ -121,11 +127,22 @@
                     v => v.length > 10 || 'Минимальная длина поля - 10 символов',
                     v => !/[a-zA-Zа-яА-ЯёЁ]/.test(v) || 'Телефон должен состоять из цифр и символов "(", ")", "-"'
                 ],
-            }
+            },
+            logo: {
+                image: null,
+                title: null,
+                subtitle: null
+            },
+            cssProps: {}
         }),
-        mounted() {
+        async mounted() {
             this.loadUserInfo();
 
+            await loader().loadOptions();
+            this.logo.image = loader().getOption(['Header', 'Logo', 'Image']);
+            this.logo.title = loader().getOption(['Header', 'Logo', 'Title']);
+            this.logo.subtitle = loader().getOption(['Header', 'Logo', 'Subtitle']);
+            this.cssProps.backgroundColor = loader().getOption(['Header', 'Background'])
             eventBus.$on('update-main-bar', () => {
                 this.loadUserInfo();
             })

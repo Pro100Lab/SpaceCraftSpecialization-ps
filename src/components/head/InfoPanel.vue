@@ -1,67 +1,36 @@
 <template>
-    <v-sheet class="rounded-0 elevation-0" color="white">
-        <v-card style="background-color: #f5f5f5" class="rounded-0 elevation-0 mx-auto info-panel__main-scope">
+    <div :style="background">
+        <v-card :style="cssProps" class="rounded-0 elevation-0 mx-auto info-panel__main-scope">
             <v-card-actions class="d-flex flex-row justify-start">
-                <v-btn v-for="btn of infoItems" :key="btn.id"
+                <v-btn v-for="btn of infoItems" :key="btn.name"
                        class="transparent text-capitalize"
                        elevation="0"
-                       :to="btn.link"
+                       :to="btn.value"
                        style="height: inherit;">
                     <span class="info-panel__adaptive-font">{{btn.name}}</span>
                 </v-btn>
             </v-card-actions>
         </v-card>
-    </v-sheet>
+    </div>
 </template>
 
 <script>
+    import loader from "../../utils/customizeOptions";
+
     export default {
         name: "InfoPanel",
         data () {
             return {
-                infoItems: [
-                    // {
-                    //     id: 0,
-                    //     name: 'О компании',
-                    //     link: '/about'
-                    // },
-                    {
-                        id: 1,
-                        name: 'Отзывы',
-                        link: '/comments'
-                    },
-                    {
-                        id: 2,
-                        name: 'Галерея',
-                        link: '/gallery'
-                    },
-                    // {
-                    //     id: 3,
-                    //     name: 'Доставка',
-                    //     link: '/delivery'
-                    // },
-                    {
-                        id: 4,
-                        name: 'Оплата',
-                        link: '/payment'
-                    },
-                    // {
-                    //     id: 5,
-                    //     name: 'Гарантия',
-                    //     link: '/warranty'
-                    // },
-                    {
-                        id: 6,
-                        name: 'Полезная информация',
-                        link: '/payload'
-                    },
-                    {
-                        id: 7,
-                        name: 'Контакты',
-                        link: '/contacts'
-                    }
-                ]
+                infoItems: [],
+                cssProps: {},
+                background: {backgroundColor: 'yellow'}
             }
+        },
+        async mounted() {
+            await loader().loadOptions();
+            this.infoItems = loader().getOptions(['Header', 'InfoBar', 'Links']);
+            this.cssProps.backgroundColor = loader().getOption(['Header', 'InfoBar', 'Background']);
+            this.background.backgroundColor = loader().getOption(['Header', 'InfoBar', 'Mount']);
         }
     }
 </script>

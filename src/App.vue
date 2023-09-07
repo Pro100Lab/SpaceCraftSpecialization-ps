@@ -127,6 +127,7 @@
     import SnackController from "./components/utility/SnackController";
     import InfoPanel from "./components/head/InfoPanel";
     import ShortCuts from "./components/utility/ShortCuts";
+    import loader from "./utils/customizeOptions";
 
     export default {
         name: 'App',
@@ -135,12 +136,13 @@
             cssProps: {
                 // background: `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${require('@/assets/background.png')})`,
                 background: `url(${require('@/assets/background.png')})`,
-                backgroundAttachment: 'fixed',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                backgroundColor: 'black'
-            },
 
+            },
         }),
+        async beforeMount() {
+            await loader().loadOptions();
+
+            this.cssProps.background = loader().getOption(['Body', 'Background']);
+        }
     };
 </script>
