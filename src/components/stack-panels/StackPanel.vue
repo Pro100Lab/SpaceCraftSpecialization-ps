@@ -101,7 +101,6 @@
         height: 100%;
         z-index: 100;
         width: 40vw;
-        min-width: 480px;
     }
     .slide-fade-enter-active {
         transition: all .3s;

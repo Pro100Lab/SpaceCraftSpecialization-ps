@@ -5,7 +5,6 @@
             <InfoPanel class="main__info-panel"/>
             <MainAppBar class="main__app-bar"/>
             <MinorAppBar class="minor__app-bar"/>
-            <!--<header/>-->
 
             <!--<router/main view>-->
             <v-row class="my-lg-4 responsiveContainer">

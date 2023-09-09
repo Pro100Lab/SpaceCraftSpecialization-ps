@@ -67,7 +67,7 @@
             </v-row>
         </div>
         <div v-else-if="blockType===5">
-            <v-row>
+            <v-row class="ma-0">
                 <v-col cols="4" v-for="image of images" :key="image">
                     <v-img
                             style="max-height: 400px"
@@ -91,7 +91,7 @@
                 />
                 <v-card-title
                         v-if="line.item.length > 1"
-                        class="text-break py-0" style="font-weight: 500; min-width: 200px"
+                        class="text-break py-0" style="font-weight: 500; min-width: 20vw"
                         v-html="line.item[1]"
                 />
 
