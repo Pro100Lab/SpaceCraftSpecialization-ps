@@ -99,9 +99,9 @@
                         slide-multiple
                         autoplay
                         pauseOnTouch
-                        fixed-height="400px"
                         :dragging-distance="70"
                         prevent-y-scroll
+                        :slide-ratio="1 / 3"
                 >
                     <vueper-slide v-for="image of images"
                                   :key="image"

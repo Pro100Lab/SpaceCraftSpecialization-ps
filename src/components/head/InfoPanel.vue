@@ -7,7 +7,8 @@
                        elevation="0"
                        :to="btn.value"
                        style="height: inherit;">
-                    <span class="info-panel__adaptive-font">{{btn.name}}</span>
+                    <span class="info-panel__adaptive-font"
+                    :style="{color: cssProps.color}">{{btn.name}}</span>
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -23,14 +24,15 @@
             return {
                 infoItems: [],
                 cssProps: {},
-                background: {backgroundColor: 'yellow'}
+                background: {background: '#f5f5f5'}
             }
         },
         async mounted() {
             await loader().loadOptions();
             this.infoItems = loader().getOptions(['Header', 'InfoBar', 'Links']);
-            this.cssProps.backgroundColor = loader().getOption(['Header', 'InfoBar', 'Background']);
-            this.background.backgroundColor = loader().getOption(['Header', 'InfoBar', 'Mount']);
+            this.cssProps.background = loader().getOption(['Header', 'InfoBar', 'Background']);
+            this.cssProps.color = loader().getOption(['Header', 'InfoBar', 'Text']);
+            this.background.background = loader().getOption(['Header', 'InfoBar', 'Mount']);
         }
     }
 </script>

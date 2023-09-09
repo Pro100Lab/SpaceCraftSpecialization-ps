@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-column mt-4">
+                <div class="d-flex flex-column mt-4" v-if="infoPages && infoPages.length > 0">
                     <p class="footer__title"><strong>Информация</strong></p>
                     <div class="d-flex" :class="isMobile ? 'flex-column justify-start align-start' : 'd-flex flex-row'">
                         <div class="d-flex flex-column align-start">
@@ -58,7 +58,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex flex-column justify-center align-start mt-4">
+                <div class="d-flex flex-column justify-center align-start mt-4" v-if="contacts && contacts.length > 0">
                     <p class="footer__title"><strong>Контакты</strong></p>
                     <div v-for="(contact, i) of contacts" :key="i" class="d-flex flex-row align-center pb-1">
                         <v-icon small class="footer__subtitle" v-if="contact.name">{{contact.value}}</v-icon>
@@ -100,9 +100,9 @@
     import {getURL} from "../utils/settings";
     import eventBus from "../utils/eventBus";
     import loader from "../utils/customizeOptions";
-    // import * as fb from '../assets/icon/ic-facebook.svg';
-    // import * as inst from '../assets/icon/ic-instargam.svg';
-    // import * as tw from '../assets/icon/ic-twitter.svg';
+    import * as fb from '../assets/icon/ic-facebook.svg';
+    import * as inst from '../assets/icon/ic-instargam.svg';
+    import * as tw from '../assets/icon/ic-twitter.svg';
     import * as vk  from '../assets/icon/ic-vkontakte.svg';
     import * as whatapp from '../assets/icon/ic-whatsapp.svg';
 
@@ -123,7 +123,10 @@
                 socials: [],
                 socIcons: {
                     'VK': vk,
-                    'WhatsApp': whatapp
+                    'WhatsApp': whatapp,
+                    'FB': fb,
+                    'Inst': inst,
+                    'Twitter': tw
                 },
                 logo: {
                     image: null,

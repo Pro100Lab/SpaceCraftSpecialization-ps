@@ -134,12 +134,9 @@
         components: {ShortCuts, InfoPanel, SnackController, StackPanel, Footer, MinorAppBar, MainAppBar},
         data: () => ({
             cssProps: {
-                // background: `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${require('@/assets/background.png')})`,
-                background: `url(${require('@/assets/background.png')})`,
-
             },
         }),
-        async beforeMount() {
+        async mounted() {
             await loader().loadOptions();
 
             this.cssProps.background = loader().getOption(['Body', 'Background']);

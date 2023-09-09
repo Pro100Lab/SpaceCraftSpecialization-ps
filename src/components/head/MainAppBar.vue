@@ -1,7 +1,7 @@
 <template>
     <v-card class="rounded-0 elevation-0" :style="cssProps">
         <div class="app-bar__main-scope mx-auto">
-            <div class="d-flex align-end justify-center">
+            <div class="d-flex align-end justify-start">
                 <!--<logo>-->
                 <div class="d-flex flex-row align-center">
                 <v-img :src="logo.image"
@@ -16,11 +16,13 @@
                 <!--</logo>-->
                 <div class="d-flex flex-column">
                     <v-card-title class="app-bar__adaptive-title"
+                                  :style="{color: logo.textColor}"
                                   v-html="logo.title"
                                   v-if="logo.title">
                     </v-card-title>
                     <v-card-subtitle
                             class="app-bar__adaptive-subtitle"
+                            :style="{color: logo.textColor}"
                             v-html="logo.subtitle"
                             v-if="logo.subtitle"
                     >
@@ -131,17 +133,20 @@
             logo: {
                 image: null,
                 title: null,
-                subtitle: null
+                subtitle: null,
+                textColor: null,
             },
-            cssProps: {}
+            cssProps: {background: '#f5f5f5'}
         }),
         async mounted() {
             this.loadUserInfo();
 
             await loader().loadOptions();
-            this.logo.image = loader().getOption(['Header', 'Logo', 'Image']);
-            this.logo.title = loader().getOption(['Header', 'Logo', 'Title']);
-            this.logo.subtitle = loader().getOption(['Header', 'Logo', 'Subtitle']);
+            this.logo.image = loader().getOption(['Header', 'MainBar', 'Logo', 'Image']);
+            this.logo.title = loader().getOption(['Header', 'MainBar', 'Logo', 'Title']);
+            this.logo.subtitle = loader().getOption(['Header', 'MainBar', 'Logo', 'Subtitle']);
+            this.logo.textColor = loader().getOption(['Header', 'MainBar', 'Logo', 'Text']);
+
             this.cssProps.backgroundColor = loader().getOption(['Header', 'Background'])
             eventBus.$on('update-main-bar', () => {
                 this.loadUserInfo();
