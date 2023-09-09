@@ -1,8 +1,10 @@
 <template>
     <v-card dark class="elevation-0" :class="customClass || ''" style="width: 100%; background: rgba(0,0,0,0.7)">
+        <template v-if="title">
         <v-card-title style="color: white;font-weight: normal"
                       class="text-break text-center pb-4"
-                      v-if="title" v-html="title.replace('\n', '&lt;br/&gt;')"/>
+                      v-html="title.replace('\n', '&lt;br/&gt;')"/>
+        </template>
         <div v-if="blockType===1">
             <v-card-text class="text-break"
                          style="font-size: 1rem"
@@ -22,6 +24,7 @@
                 </v-col>
                 <v-col cols="6">
                     <v-img
+                            class="rounded-xl"
                             style="max-height: 400px"
                             contain :src="getURL(`static/${images[0]}`)"
                     >
@@ -33,6 +36,7 @@
             <v-row>
                 <v-col cols="6">
                     <v-img
+                            class="rounded-xl"
                             style="max-height: 400px"
                             v-if="images && images.length > 0"
                             contain :src="getURL(`static/${images[0]}`)"
@@ -53,6 +57,7 @@
             <v-row>
                 <v-col cols="6" v-for="image of images" :key="image">
                     <v-img
+                            class="rounded-xl"
                             style="max-height: 400px"
                             :src="getURL(`static/${image}`)"
                             contain
@@ -97,6 +102,8 @@
                 <vueper-slides
                         class="no-shadow"
                         slide-multiple
+                        :arrows="false"
+                        :bullets="false"
                         autoplay
                         pauseOnTouch
                         :dragging-distance="70"
@@ -112,6 +119,7 @@
             </div>
             <div v-else>
                 <v-img
+                        class="rounded-xl"
                         style="background-size: cover"
                        :src="getURL(`static/${images[0]}`)">
 
@@ -178,7 +186,7 @@
     export default {
         name: "BlockInfo",
         components: {BookingBlock, ProductView, VueperSlides, VueperSlide, },
-        props: ['info', 'customClass'],
+        props: ['idx', 'info', 'customClass'],
         data() {
             return {
                 coords: [56.079131, 63.638838],
@@ -193,6 +201,7 @@
                     show: false,
                     id: 0
                 },
+                blockInfo: null,
                 compareIds: [],
                 favouriteIds: [],
                 tns: null,
@@ -205,6 +214,10 @@
             }
         },
         methods: {
+            async loadBlock(id) {
+                this.blockInfo = await axios.get(getURL(`block/${id}`));
+                this.putInfo(this.blockInfo.data);
+            },
             goToProduct(idx) {
                 this.$router.push(`/product/${idx}`)
             },
@@ -298,7 +311,11 @@
         },
         mounted() {
             if(this.info) {
-                this.putInfo(this.info);
+                this.blockInfo = this.info;
+                this.putInfo(this.blockInfo);
+            }
+            if(!this.info && this.idx) {
+                this.loadBlock(this.idx);
             }
 
             eventBus.$on('product-view-closed', ()=>{

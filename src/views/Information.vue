@@ -4,7 +4,7 @@
         <BlockInfo
                 v-for="(info, index) of blocks"
                 :key="info['@Block']"
-                v-bind="{info, customClass: rounder(index, blocks.length, info['Type'] !== 7)}"/>
+                v-bind="{idx: info['@Block'], info, customClass: rounder(index, blocks.length, info['Type'] !== 7)}"/>
     </v-col>
 </template>
 

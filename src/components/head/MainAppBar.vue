@@ -1,7 +1,7 @@
 <template>
     <v-card class="rounded-0 elevation-0" :style="cssProps">
         <div class="app-bar__main-scope mx-auto">
-            <div class="d-flex align-end justify-start">
+            <div class="d-flex flex-row align-center justify-space-between">
                 <!--<logo>-->
                 <div class="d-flex flex-row align-center">
                 <v-img :src="logo.image"
@@ -28,6 +28,9 @@
                     >
                     </v-card-subtitle>
                 </div>
+                </div>
+                <div style="width: 20vw;" class="d-flex flex-row justify-start">
+                <block-info  :idx="blockId" v-if="blockId"></block-info>
                 </div>
 <!--                <div class="d-flex flex-column justify-center px-1">-->
 <!--                    <div class="d-flex flex-row my-1">-->
@@ -99,9 +102,11 @@
     import eventBus from "../../utils/eventBus";
     import * as profile from "../../utils/profile";
     import loader from "../../utils/customizeOptions";
+    import BlockInfo from "../blocks/BlockInfo";
 
     export default {
         name: "MainAppBar",
+        components: {BlockInfo},
         data: () => ({
             profile,
             items: [
@@ -136,7 +141,8 @@
                 subtitle: null,
                 textColor: null,
             },
-            cssProps: {background: '#f5f5f5'}
+            cssProps: {background: '#f5f5f5'},
+            blockId: null,
         }),
         async mounted() {
             this.loadUserInfo();
@@ -146,6 +152,7 @@
             this.logo.title = loader().getOption(['Header', 'MainBar', 'Logo', 'Title']);
             this.logo.subtitle = loader().getOption(['Header', 'MainBar', 'Logo', 'Subtitle']);
             this.logo.textColor = loader().getOption(['Header', 'MainBar', 'Logo', 'Text']);
+            this.blockId = loader().getOption(['Header', 'MainBar', 'Block']);
 
             this.cssProps.backgroundColor = loader().getOption(['Header', 'Background'])
             eventBus.$on('update-main-bar', () => {

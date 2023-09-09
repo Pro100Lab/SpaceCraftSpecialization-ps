@@ -2,7 +2,9 @@
     <v-card color="rgba(0,0,0,0.5)" class="d-flex flex-column">
         <section class="fl-footer">
         <div class="footer__main-scope mx-auto">
-            <v-sheet class="transparent d-flex flex-row justify-space-between align-start" style="height: 70%" dark>
+            <v-sheet :class="`transparent d-flex ${isMobile ?
+            'flex-column align-center' : 'flex-row justify-space-between align-start'}`"
+                     style="height: 70%" dark>
                 <div class="d-flex flex-column justify-center align-start mt-4">
                     <div class="d-flex flex-column align-center">
                         <v-img :src="logo.image"
