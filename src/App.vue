@@ -139,7 +139,7 @@
         async beforeMount() {
             await loader().loadOptions();
 
-            this.cssProps.background = loader().getOption(['Body', 'Background']);
+            this.cssProps = {background: loader().getOption(['Body', 'Background'])};
         }
     };
 </script>
