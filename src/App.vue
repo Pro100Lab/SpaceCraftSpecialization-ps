@@ -136,7 +136,7 @@
             cssProps: {
             },
         }),
-        async mounted() {
+        async beforeMount() {
             await loader().loadOptions();
 
             this.cssProps.background = loader().getOption(['Body', 'Background']);
