@@ -68,7 +68,7 @@
         </div>
         <div v-else-if="blockType===5">
             <v-row class="ma-0">
-                <v-col cols="4" class="pa-0" v-for="image of images" :key="image">
+                <v-col cols="4" class="px-1" v-for="image of images" :key="image">
                     <v-img
                             style="max-height: 400px"
                             :src="getURL(`static/${image}`)"

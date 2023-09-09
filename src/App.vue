@@ -7,7 +7,7 @@
             <MinorAppBar class="minor__app-bar"/>
 
             <!--<router/main view>-->
-            <v-row class="my-lg-4 responsiveContainer">
+            <v-row class="responsiveContainer">
                 <v-main>
                     <router-view :key="$route.fullPath"/>
                 </v-main>
