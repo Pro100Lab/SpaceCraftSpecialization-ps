@@ -1,7 +1,7 @@
 
 export const is_debug = process.env.NODE_ENV === 'development';
 export const debug_endpoint = '127.0.0.1:8000';
-export const endpoint = 'spacecraft-it.ru';
+export const endpoint = 'flagman-climate.ru';
 export const schema = 'https';
 export const debug_schema = 'http';
 export const endpoint_version = 'v1';
