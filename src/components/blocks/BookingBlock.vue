@@ -179,7 +179,7 @@
                 this.calculated = true;
 
                 this.bookingVariants = [];
-                const price = ( this.nights > 3 ? 700 : 1000 ) * this.peopleAmount * this.nights;
+                const price = ( this.nights > 3 ? 800 : 1000 ) * this.peopleAmount * this.nights;
                 const roomsAmount = Math.ceil(this.peopleAmount / 4);
                 let id = 0;
                 this.bookingVariants.push({
