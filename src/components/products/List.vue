@@ -11,6 +11,7 @@
                        sale: product.sale,
                        salePercent: product.salePercent,
                        description: product.description,
+                       available: product.available,
                        source: product.images && product.images.length > 0 ? product.images[0] : '',
                        actions: {...actions, onHeartClick, onAbacusClick, onCartClick, onProductView, goToProduct},
                        favourite: favouriteIds.indexOf(product.id) !== -1,

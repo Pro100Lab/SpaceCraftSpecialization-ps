@@ -1,7 +1,11 @@
 <template>
-    <v-card dark class="elevation-0" :class="customClass || ''" style="width: 100%; background: rgba(0,0,0,0.7)">
+    <v-sheet
+            :dark="settings.schema === 'dark'"
+             :class="cssClass"
+            :style="cssProps || {width: settings.block.width,
+                                 background: settings.block.background}">
         <template v-if="title">
-        <v-card-title style="color: white;font-weight: normal"
+        <v-card-title style="font-weight: normal"
                       class="text-break text-center pb-4"
                       v-html="title.replace('\n', '&lt;br/&gt;')"/>
         </template>
@@ -13,24 +17,20 @@
             />
         </div>
         <div v-else-if="blockType===2">
-            <v-row>
-                <v-col cols="6">
+            <div class="d-flex flex-row">
                     <v-card-text
-                            style="font-size: 1rem"
+                            style="font-size: 1rem;"
                             class="text-break"
                             v-if="description"
                             v-html="description.replaceAll('\n', '&lt;br/&gt;')"
                     />
-                </v-col>
-                <v-col cols="6">
                     <v-img
                             class="rounded-xl"
-                            style="max-height: 400px"
-                            contain :src="getURL(`static/${images[0]}`)"
+                            style="max-width: 50%"
+                            contain :src="getStatic(images[0])"
                     >
                     </v-img>
-                </v-col>
-            </v-row>
+            </div>
         </div>
         <div v-else-if="blockType===3">
             <v-row>
@@ -39,7 +39,7 @@
                             class="rounded-xl"
                             style="max-height: 400px"
                             v-if="images && images.length > 0"
-                            contain :src="getURL(`static/${images[0]}`)"
+                            contain :src="getStatic(images[0])"
                     >
                     </v-img>
                 </v-col>
@@ -59,7 +59,7 @@
                     <v-img
                             class="rounded-xl"
                             style="max-height: 400px"
-                            :src="getURL(`static/${image}`)"
+                            :src="getStatic(images[0])"
                             contain
                     >
                     </v-img>
@@ -71,7 +71,7 @@
                 <v-col cols="4" class="px-1" v-for="image of images" :key="image">
                     <v-img
                             style="max-height: 400px"
-                            :src="getURL(`static/${image}`)"
+                            :src="getStatic(images[0])"
                             class="rounded-xl"
                             contain>
                     </v-img>
@@ -112,17 +112,16 @@
                 >
                     <vueper-slide v-for="image of images"
                                   :key="image"
-                                  :image="getURL(`static/${image}`)"
+                                  :image="getStatic(images[0])"
                     >
                     </vueper-slide>
                 </vueper-slides>
             </div>
             <div v-else>
                 <v-img
-                        class="rounded-xl"
-                        style="background-size: cover"
-                       :src="getURL(`static/${images[0]}`)">
-
+                       :src="getStatic(images)"
+                       :height="cssProps && cssProps.height ? cssProps.height : 400"
+                >
                 </v-img>
             </div>
         </div>
@@ -143,7 +142,7 @@
                               :key="image"
                               contain
                               :link="linkTo(image)"
-                              :image="getURL(`static/${image}`)"
+                              :image="getStatic(image)"
                 >
                 </vueper-slide>
             </vueper-slides>
@@ -152,15 +151,18 @@
             <booking-block></booking-block>
         </div>
         <div v-else-if="blockType===11">
-            <v-sheet height="300" class="my-2">
-                <yandex-map :coords="coords" :zoom="18">
+            <v-sheet height="300">
+                <yandex-map :coords="coords" :zoom="17">
                     <ymap-marker
                             marker-id="123"
                             :coords="coords"
-                            :balloon-template="balloonTemplate"
+                            :balloon-template="balloon"
                     ></ymap-marker>
                 </yandex-map>
             </v-sheet>
+        </div>
+        <div v-else-if="blockType===12">
+            <CategoryBlock :category-id="description"></CategoryBlock>
         </div>
         <v-overlay v-on:click="dialogInfo.show = false"
                    v-model="dialogInfo.show"
@@ -171,25 +173,28 @@
                 v-if="dialogInfo.show"
                 class="view-adaptive"
                 v-bind="{dialogInfo}"/>
-    </v-card>
+    </v-sheet>
 </template>
 
 <script>
-    import {getURL, normalizePrice} from "../../utils/settings";
+    import {getStatic, getURL, normalizePrice} from "../../utils/settings";
     import ProductView from "../products/View"
     import axios from "axios";
     import eventBus from "../../utils/eventBus";
     import { VueperSlides, VueperSlide } from 'vueperslides'
     import 'vueperslides/dist/vueperslides.css';
     import BookingBlock from "./BookingBlock";
+    import getLoader from "../../utils/customizeOptions";
+    import CategoryBlock from "./CategoryBlock";
 
     export default {
         name: "BlockInfo",
-        components: {BookingBlock, ProductView, VueperSlides, VueperSlide, },
+        components: {CategoryBlock, BookingBlock, ProductView, VueperSlides, VueperSlide, },
         props: ['idx', 'info', 'customClass'],
         data() {
             return {
-                coords: [56.079131, 63.638838],
+                coords: [],
+                balloon: '',
                 loaded: false,
                 blockType: 1,
                 title: '',
@@ -205,12 +210,14 @@
                 compareIds: [],
                 favouriteIds: [],
                 tns: null,
-            }
-        },
-        computed: {
-            balloonTemplate() {
-                return `<h3>Хостел "Галактика"</h3>
-        <v-card-subtitle>г. Шадринск, ул. Карла Маркса, д. 90Б</v-card-subtitle>`
+                settings: {
+                    schema: null,
+                    block: {}
+                },
+                cssProps: {
+
+                },
+                cssClass: ''
             }
         },
         methods: {
@@ -221,7 +228,7 @@
             goToProduct(idx) {
                 this.$router.push(`/product/${idx}`)
             },
-            getURL,
+            getURL, getStatic,
             onProductView(id) {
                 this.dialogInfo.id = id;
                 this.dialogInfo.show = true;
@@ -230,6 +237,8 @@
                 this.blockType = info['Type'];
                 this.title = info['Title'];
                 this.description = info['Description'];
+                this.cssProps = info['CSSProps'];
+                this.cssClass = info['CSSClass']
                 const content = info['Content'];
                 if( content && !Array.isArray(content) )
                     this.images = Object.keys(content);
@@ -309,7 +318,17 @@
                 this.updateProduct('Cart', id);
             },
         },
-        mounted() {
+        async mounted() {
+            await getLoader().loadOptions();
+            this.settings.schema = getLoader().getOption(['Common', 'Schema']);
+            this.settings.block.width = getLoader().getOption(['Common', 'Block', 'Width']);
+            this.settings.block.background = getLoader().getOption(['Common', 'Block', 'Background']);
+
+            this.coords = [getLoader().getOption(['Common', 'Block', 'Map', 'Coords', 'x']),
+                getLoader().getOption(['Common', 'Block', 'Map', 'Coords', 'y'])
+            ];
+            this.balloon = getLoader().getOption(['Common', 'Block', 'Map', 'Balloon']);
+
             if(this.info) {
                 this.blockInfo = this.info;
                 this.putInfo(this.blockInfo);

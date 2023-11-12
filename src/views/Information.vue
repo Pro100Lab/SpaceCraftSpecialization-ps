@@ -1,10 +1,10 @@
 <template>
-    <v-col class="information__view pa-0">
+    <v-col class="pa-0">
         <BreadCrumbs :crumbs="crumbs" v-if="crumbs && crumbs.length > 0"/>
         <BlockInfo
-                v-for="(info, index) of blocks"
+                v-for="info in blocks"
                 :key="info['@Block']"
-                v-bind="{idx: info['@Block'], info, customClass: rounder(index, blocks.length, info['Type'] !== 7)}"/>
+                v-bind="{idx: info['@Block'], info}"/>
     </v-col>
 </template>
 
@@ -18,6 +18,7 @@
     export default {
         name: "Information",
         components: {BlockInfo, BreadCrumbs},
+        props: ['page'],
         data: () => {
             return {
                 title: '',
@@ -34,10 +35,12 @@
           }
         },
         mounted() {
-            axios.get(getURL(`info/${this.$route.params.info_id ? this.$route.params.info_id : '' }`))
+            const page = this.page ? this.page : '' || this.$route.params.info_id ? this.$route.params.info_id : '' ;
+
+            axios.get(getURL(`info/${page}`))
                 .then(async response => {
                     const info = response.data;
-                    const blockIds = info['Blocks'];
+                    const blockIds = info['Blocks'] || [];
                     for(const blockId of blockIds) {
                         const blockInfo = await this.loadBlock(blockId);
                         this.blocks.push(blockInfo.data)
@@ -54,7 +57,7 @@
 <style scoped>
     .information__view {
         display: flex;
-        width: 70%;
+        width: 70vw;
         flex-direction: column;
         justify-content: space-between;
         margin: 0 auto;
@@ -62,14 +65,14 @@
 
     @media screen and (max-width: 1280px) {
         .information__view {
-            width: 85%;
+            width: 85vw;
             margin: 0 auto;
         }
     }
 
     @media screen and (max-width: 960px) {
         .information__view {
-            width: 100%;
+            width: 100vw;
         }
     }
 </style>

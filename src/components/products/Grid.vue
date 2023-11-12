@@ -14,7 +14,8 @@
                      specialPrice: product.specialPrice,
                      sale: product.sale,
                      salePercent: product.salePercent,
-                     actions: {...actions, onHeartClick, onAbacusClick, onCartClick, onProductView, goToProduct},
+                     available: product.available,
+                     actions: {onProductView, goToProduct},
                      favourite: favouriteIds.indexOf(product.id) !== -1,
                      compare: compareIds.indexOf(product.id) !== -1}"
                         :style="{'width': '100%'}"
@@ -37,7 +38,7 @@
             eventBus,
             productRows: [],
         }),
-        props: ['gridCols', 'cardWidth', 'windowWidth', 'onProductView','products', 'actions', 'favouriteIds', 'compareIds'],
+        props: ['gridCols', 'cardWidth', 'windowWidth', 'onProductView','products', 'favouriteIds', 'compareIds'],
         mounted() {
             if (this.products && this.products.length > 0) {
                 this.productRows = this.getProductRows();
@@ -46,7 +47,8 @@
         watch: {
           products(value) {
               if (!this.products) return;
-              this.products = value;
+              console.log('products grid, new products: ', this.products);
+                this.products = value;
                 this.productRows = this.getProductRows();
           },
             gridCols() {
@@ -54,35 +56,6 @@
             }
         },
         methods: {
-            onItemClick: function(text, linkName, link) {
-                eventBus.$emit('snack-show', text, linkName, link);
-            },
-            onHeartClick: function(id) {
-              const idInArray = this.favouriteIds.indexOf(id);
-              if( idInArray !== -1 ) {
-                  this.favouriteIds.splice(idInArray, 1);
-              } else {
-                  this.favouriteIds.push(id);
-                  this.onItemClick('Товар добавлен в избранное', 'открыть избранное', 'favourite');
-              }
-              this.actions.productToFavourite(id);
-            },
-            onAbacusClick: function(id) {
-                const idInArray = this.compareIds.indexOf(id);
-                if( idInArray !== -1 ) {
-                    this.compareIds.splice(idInArray, 1);
-                } else {
-                    this.compareIds.push(id);
-                    this.onItemClick('Товар добавлен в сравнения', 'открыть сравнения', 'compare');
-                }
-
-                this.actions.productToCompare(id);
-            },
-            onCartClick: function(id) {
-                this.onItemClick('Товар добавлен в корзину', 'открыть корзину', 'cart');
-                this.actions.productToCart(id);
-            },
-
             getProductRows: function () {
                 let offset = 0;
                 let productCol = [];

@@ -9,11 +9,11 @@
                         contain
                         height="150px"
                         class="mx-2 my-2 mx-auto"
-                        :class="hover? 'scaled' : ''"
-                        :src="images && images.length > 0 ? getURL(`static/${images[0]}`) : 'https://tdoo.ru/themes/theme654/assets/img/no-image.png'"
+                        :class="hover? 'scaled' : 'unscaled'"
+                        :src="images && images.length > 0 ? getStatic(images[0]) : getStatic(noPhoto)"
                         alt=""
-                        style="cursor: zoom-in"
-                        v-on:click="actions.onProductView(id, title, description)"
+                        :style="isMobile ? {} : {cursor: 'zoom-in'}"
+                        v-on:click="isMobile ? actions.goToProduct(id) : actions.onProductView(id, title, description)"
                 >
                 </v-img>
                     <v-card-title
@@ -25,10 +25,13 @@
                     </v-card-title>
                 <v-divider></v-divider>
                 <v-card-actions class="mx-2 my-0 py-0">
-                    <h4 style="font-size: 0.8rem; color: rgba(0,165,0,0.5)">• В наличии</h4>
+                    <h4 style="font-size: 0.8rem; color: rgba(165,0,0,0.5)" v-if="!available">• Нет в наличии</h4>
+                    <h4 style="font-size: 0.8rem; color: rgba(0,165,0,0.5)" v-else-if="available === 'В наличии'">• {{available}}</h4>
+                    <h4 style="font-size: 0.8rem; color: rgba(165,105,0,0.5)" v-else>• {{available}}</h4>
                 </v-card-actions>
                 <v-card-actions class="mx-2">
-                    <span><strong>{{normalizePrice(price)}} Руб.</strong></span>
+                    <span v-if="price"><strong>{{normalizePrice(price)}} Руб.</strong></span>
+                    <span v-else>Цена договорная</span>
                     <v-spacer/>
                     <v-tooltip top>
                         <template v-slot:activator="{ on, attrs }">
@@ -36,7 +39,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :color="favourite ? 'red': 'gray'"
-                                    v-on:click="actions.onHeartClick(id)"
+                                    v-on:click="processClick('favourite', id)"
                             >mdi-heart</v-icon>
                         </template>
                         <span>
@@ -49,7 +52,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :color="compare ? 'orange': 'gray'"
-                                    v-on:click="actions.onAbacusClick(id)"
+                                    v-on:click="processClick('compare', id)"
                             >mdi-abacus</v-icon>
                         </template>
                         <span>
@@ -62,9 +65,11 @@
                     <br/><p style="color: purple" class="ma-0"><strong>Выгода: {{sale}} Руб. ({{salePercent}}%)</strong></p>
                 </v-card-subtitle>
                 <v-btn
+                        v-if="price"
+                        dark
                         class="rounded-t-0 text-break"
-                        color="blue"
-                        v-on:click="actions.onCartClick(id)"
+                        :color="common.color"
+                        v-on:click="processClick('cart', id)"
                 >В корзину</v-btn>
             </v-card>
         </v-hover>
@@ -72,20 +77,36 @@
 </template>
 
 <script>
-    import {getURL, normalizePrice} from "../../utils/settings";
+    import {getStatic, getURL, normalizePrice} from "../../utils/settings";
     import eventBus from "../../utils/eventBus";
+    import loader from "../../utils/customizeOptions";
 
     export default {
         name: "Card",
         props: ['id', 'title', 'description', 'images', 'price', 'specialPrice', 'sale', 'salePercent',
-            'actions', 'favourite', 'compare', 'width'],
+            'actions', 'favourite', 'compare', 'width', 'available'],
         data: () => {
             return {
                 eventBus,
+                noPhoto: null,
+                common: {color: 'primary'}
             }
         },
+        computed: {
+            isMobile: function() {
+                return window.innerWidth < 960;
+            }
+        },
+        async beforeMount() {
+            await loader().loadOptions();
+            this.noPhoto = loader().getOption(['Common', 'NoPhoto']);
+            this.common.color = loader().getOption(['Common', 'Schema', 'Colors', 'Primary']);
+        },
         methods: {
-            normalizePrice, getURL
+            normalizePrice, getURL, getStatic,
+            processClick(type, id) {
+                eventBus.$emit('product-meta-updated', id, type);
+            }
         }
     }
 </script>
@@ -99,5 +120,9 @@
         transition: .2s; /* Время эффекта */
         display: block; /* Убираем небольшой отступ снизу */
         transform: scale(1.2) /* Увеличиваем масштаб */
+    }
+
+    .unscaled {
+        transition: .2s; /* Время эффекта */
     }
 </style>

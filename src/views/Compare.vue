@@ -1,21 +1,19 @@
 <template>
-    <v-card  class="elevation-0 transparent mx-auto" :style="{'width': `${mainWidth}vw`}" style="min-height: 500px">
+    <v-card class="elevation-0 transparent mx-auto pb-4" :style="{'width': `${mainWidth}vw`}" style="min-height: 40vh; width: 70vw">
         <BreadCrumbs :crumbs="[{text: 'Главная', href:'/', disabled: false}, {text: 'Сравнить товары', href: '', disabled: true}]"/>
         <div v-if="products && products.length > 0">
-        <v-card color="white" id="bound-scroll-x" class="d-flex flex-column overflow-hidden" rounded="0">
+        <v-card color="white" id="bound-scroll-x" class="d-flex flex-column overflow-hidden elevation-0" rounded="0">
             <div class="d-flex flex-row py-2" style="height: 10vh; padding-right: 1em;">
                 <div class="product__adaptive-column">
 
                 </div>
                 <div v-for="product of products" :key="product.id" class="product__adaptive-column" >
-                    <v-img  :src="product.images && product.images.length > 0 ? getURL(`static/${product.images[0]}`) : ''"
+                    <v-img  :src="product.images && product.images.length > 0 ? getStatic(product.images[0]) : getStatic(noPhoto)"
                             style="height: 70%; width: 70%"
                             class="mx-auto text-end"
                             contain >
-                        <v-icon color="rgba(62, 25, 192, 0.7)"
-                                large
-
-                                class="my-1" v-on:click="deleteItem(product)">mdi-trash-can</v-icon>
+                        <v-icon color="red"
+                                class="my-1" v-on:click="deleteItem(product)">mdi-close</v-icon>
                     </v-img>
                 </div>
             </div>
@@ -34,10 +32,10 @@
             <v-card id="bound-scroll-y" rounded="0"
                     class="d-flex flex-column overflow-y-hidden overflow-x-hidden bound-scroll-y product__adaptive-column"
                     style="padding-bottom: 1em">
-                <div class="d-flex flex-row align-center" style="min-height: 7vh; max-height: 7vh" v-for="(key, id) in properties" :key="key"
+                <div class="d-flex flex-row align-center" style="min-height: 4vh; max-height: 4vh" v-for="(key, id) in properties" :key="key"
                      :class="itemRowBackground(id)">
                     <div class="text-left property__fixed product__adaptive-column">
-                        <v-card-title class="text__description text-break">{{key}}</v-card-title>
+                        <v-card-title class="text__description text-break py-0">{{key}}</v-card-title>
                     </div>
                 </div>
             </v-card>
@@ -45,7 +43,7 @@
                      style="width: 100%;"
             @scroll="makeScroll">
                 <div class="d-flex flex-row align-center justify-center text-center text__description"
-                     style="min-height: 7vh; max-height: 7vh"
+                     style="min-height: 4vh; max-height: 4vh"
                      v-for="(key, id) in properties" :key="key"
                      :class="itemRowBackground(id)" :style="{width: `${products.length*15}vw`}">
                     <h4 v-for="product of products" :key="product.id" class="text-center product__adaptive-column">
@@ -55,21 +53,22 @@
             </v-sheet>
         </div>
         </div>
-        <v-card color="white" v-else rounded="0" class="text-center">
+        <v-card color="white" v-else rounded="0" class="text-center elevation-0">
             <h2 class="text-center py-4">
                 Нет товаров для сравнения
             </h2>
-            <router-link to="/category/4" class="text-center">Выбрать кондиционер</router-link>
+            <router-link to="/category/1" class="text-center">Выбрать товары</router-link>
         </v-card>
     </v-card>
 
 </template>
 
 <script>
-    import {getURL, normalizePrice} from "../utils/settings";
+    import {getStatic, getURL, normalizePrice} from "../utils/settings";
     import axios from 'axios';
     import eventBus from "../utils/eventBus";
     import BreadCrumbs from "../components/utility/BreadCrumbs";
+    import loader from "../utils/customizeOptions";
     // import $ from "jquery";
 
     export default {
@@ -88,10 +87,11 @@
                 }],
                 headerNames: [],
                 properties: [],
+                noPhoto: null
             }
         },
         methods: {
-            normalizePrice, getURL,
+            normalizePrice, getURL, getStatic,
             itemRowBackground: function (idx) {
                 return idx % 2 ? 'style-1' : 'style-2';
             },
@@ -144,6 +144,10 @@
                     }
                 }
             }
+        },
+        async beforeMount() {
+            await loader().loadOptions();
+            this.noPhoto = loader().getOption(['Common', 'NoPhoto']);
         },
         computed: {
             mainWidth: function () {

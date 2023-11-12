@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-row align-end">
+    <div>
         <v-menu
                 offset-y bottom
                 rounded
@@ -7,14 +7,18 @@
         >
             <template v-slot:activator="{ on }">
                 <v-text-field
+                        :dark="false"
+                        dense
                         style="cursor: text"
                         hide-details
                         prepend-inner-icon="mdi-magnify"
+                        :append-icon="hasMore ? 'mdi-text-search' : ''"
                         single-line
                         outlined
                         rounded
                         placeholder="Поиск по товарам"
                         color="black"
+                        v-on:click:append="showSearchPanel"
                         v-on="on"
                         v-on:click="window.innerWidth <= 1280 ? showSearchPanel() : ''"
                         v-model="search"
@@ -38,12 +42,13 @@
                     <HorizontalCard v-bind="{
                        idx: item['@Product'],
                        title: item['Title'],
-                       price: item['Properties'][0],
+                       price: item['Properties'] ? item['Properties'][0] : '0',
                        specialPrice: item['specialPrice'],
                        sale: item['sale'],
                        salePercent: item['salePercent'],
                        source: item['Images'] && item['Images'].length > 0 ? item['Images'][0] : '',
                        toSearch: true,
+                       elevation: 0
                     }"
                     />
                     <v-divider/>
@@ -55,16 +60,6 @@
                 </v-card>
             </div>
         </v-menu>
-        <v-tooltip bottom v-if="hasMore">
-            <template v-slot:activator="{on, attrs}">
-                <v-icon v-on="on" v-bind="attrs" v-on:click="showSearchPanel()">
-                    mdi-text-search
-                </v-icon>
-            </template>
-            <span>
-                Последний поиск
-            </span>
-        </v-tooltip>
     </div>
 </template>
 
@@ -97,7 +92,7 @@
                 this.noData = false
             },
             showSearchPanel() {
-                eventBus.$emit('stack-panel-open', 'search', {'search': this.search});
+                eventBus.$emit('stack-panel-push', 'search', {'search': this.search});
             },
             calculateName(amount) {
                 if( amount > 10 && amount < 20) {

@@ -15,7 +15,7 @@
                 >
                     <v-carousel-item
                             v-for="image of this.images"
-                            :key="image" :src="getURL(`static/${image}`)"
+                            :key="image" :src="getStatic(image)"
                             contain>
                     </v-carousel-item>
                 </v-carousel>
@@ -63,9 +63,11 @@
                                 {{ this.title }}
                             </v-card-title>
                             <v-card-actions class="mx-2 my-0 py-0">
-                                <h4 style="font-size: 0.8rem; color: rgba(0,165,0,0.5)">• В наличии</h4>
+                                <h4 style="font-size: 0.8rem; color: rgba(165,0,0,0.5)" v-if="!available">• Нет в наличии</h4>
+                                <h4 style="font-size: 0.8rem; color: rgba(0,165,0,0.5)" v-else-if="available === 'В наличии'">• {{available}}</h4>
+                                <h4 style="font-size: 0.8rem; color: rgba(165,105,0,0.5)" v-else>• {{available}}</h4>
                             </v-card-actions>
-                            <v-card-title>
+                            <v-card-title v-if="price">
                                 <span><strong>{{price}} Руб.</strong></span>
                             </v-card-title>
                             <v-card-subtitle v-if="specialPrice">
@@ -74,39 +76,40 @@
                             </v-card-subtitle>
                             <v-card-subtitle style="font-size: 0.8rem;">Артикул: {{art}}</v-card-subtitle>
 
-                            <v-row class="mx-3 flex-nowrap" v-if="this.title !== 'Стандартная установка кондиционера'">
-                                <v-checkbox label="Требуется установка" v-model="needSetup" />
-                                <v-tooltip top>
-                                    <template v-slot:activator="{on, attrs}">
-                                        <v-icon
-                                                v-on="on"
-                                                v-bind="attrs"
-                                                class="ml-4"
-                                                small
-                                                dense
-                                        >
-                                            mdi-help-circle
-                                        </v-icon>
-                                    </template>
-                                    <span>
-                                Стоимость установки расчитывается индивидуально
-                            </span>
-                                </v-tooltip>
-                            </v-row>
-                            <v-row class="mx-4 my-4 d-flex flex-row align-center "
-                                   style="font-size: 0.8rem; display: inline"
-                                   v-if="this.title !== 'Стандартная установка кондиционера'"
-                            >
-                        <span>
-                        Обратите <b>внимание</b>, цена установки рассчитывается отдельно по ценам, указанным в <a href="/category/2"> разделе работ</a>. Конечная цена складывается из необходимых расходных материалов
-                    </span>
-                            </v-row>
+<!--                            <v-row class="mx-3 flex-nowrap" v-if="this.title !== 'Стандартная установка кондиционера'">-->
+<!--                                <v-checkbox label="Требуется установка" v-model="needSetup" />-->
+<!--                                <v-tooltip top>-->
+<!--                                    <template v-slot:activator="{on, attrs}">-->
+<!--                                        <v-icon-->
+<!--                                                v-on="on"-->
+<!--                                                v-bind="attrs"-->
+<!--                                                class="ml-4"-->
+<!--                                                small-->
+<!--                                                dense-->
+<!--                                        >-->
+<!--                                            mdi-help-circle-->
+<!--                                        </v-icon>-->
+<!--                                    </template>-->
+<!--                                    <span>-->
+<!--                                Стоимость установки расчитывается индивидуально-->
+<!--                            </span>-->
+<!--                                </v-tooltip>-->
+<!--                            </v-row>-->
+<!--                            <v-row class="mx-4 my-4 d-flex flex-row align-center "-->
+<!--                                   style="font-size: 0.8rem; display: inline"-->
+<!--                                   v-if="this.title !== 'Стандартная установка кондиционера'"-->
+<!--                            >-->
+<!--                        <span>-->
+<!--                        Обратите <b>внимание</b>, цена установки рассчитывается отдельно по ценам, указанным в <a href="/category/2"> разделе работ</a>. -->
+<!--                            Конечная цена складывается из необходимых расходных материалов-->
+<!--                    </span>-->
+<!--                            </v-row>-->
                             <v-card-subtitle class="text-break"  v-html="description.replaceAll(';', '&lt;br/&gt;• ')
                                                                             .replaceAll('. ', '&lt;br/&gt;• ')">
                             </v-card-subtitle>
                             <router-link class="text-wrap text-center py-3 mx-4" :to="`/product/${this.id}`">Перейти к товару</router-link>
                         </div>
-                        <v-btn class="rounded-t-0 mb-5" color="blue" block v-on:click="onCartClicked(needSetup)"
+                        <v-btn v-if="price" dark class="rounded-xxl" :color="common.color" block v-on:click="onCartClicked(needSetup)"
                         > В корзину</v-btn>
                     </v-col>
             </v-col>
@@ -115,9 +118,10 @@
 </template>
 
 <script>
-    import {getURL, normalizePrice} from "../../utils/settings";
+    import {getStatic, getURL, normalizePrice} from "../../utils/settings";
     import axios from 'axios';
     import eventBus from "../../utils/eventBus";
+    import loader from "../../utils/customizeOptions";
 
     export default {
         name: "ProductView",
@@ -133,15 +137,26 @@
                 properties: [],
                 favourite: false,
                 compare: false,
+                available: '',
                 loading: true,
                 needSetup: false,
                 eventBus,
                 sale: 0,
                 salePercent: 0,
-                specialPrice: 0
+                specialPrice: 0,
+                noPhoto: null,
+                common: {
+                    color: 'primary'
+                }
             }
         },
         props: ['dialogInfo'],
+        async beforeMount() {
+            await loader().loadOptions();
+            this.noPhoto = loader().getOption(['Common', 'NoPhoto']);
+            this.common.color = loader().getOption(['Common', 'Schema', 'Colors', 'Primary']);
+
+        },
         mounted() {
             axios.get(getURL(`product/${this.dialogInfo.id}`), {withCredentials: true})
                 .then(response => {
@@ -151,10 +166,11 @@
                     this.description = product_info.description;
                     this.detailed = product_info.detailed;
                     this.price = normalizePrice(product_info.price);
-                    this.images = product_info.images;
+                    this.images = product_info.images.length >  0 ? product_info.images : [this.noPhoto];
                     this.favourite = product_info.favourite;
                     this.compare = product_info.compare;
                     this.art = product_info.art;
+                    this.available = product_info.available;
                     if(product_info.specialPrice) {
                         console.log('calculate prices')
                         this.specialPrice = product_info.specialPrice;
@@ -173,7 +189,7 @@
                 });
         },
         methods: {
-            getURL,
+            getURL, getStatic,
             onItemClick: function(text, linkName, link) {
                 eventBus.$emit('snack-show', text, linkName, link);
             },

@@ -1,9 +1,9 @@
 <template>
-    <v-col class="px-0" id="bottom">
+    <v-col class="px-1" id="bottom">
         <v-row>
-            <v-col v-if="!withoutFilter && hasFilters && window.innerWidth <= 1280" cols="12">
+            <v-col v-if="!withoutFilter && hasFilters && window.innerWidth <= 1280 && productsGroups.length > 0"  cols="12">
                 <ProductFilter
-                        v-bind="{filters, applyFilter,
+                        v-bind="{filters,
                                  expands: true}"
                 />
             </v-col>
@@ -12,56 +12,51 @@
             <v-col class="fill-height">
                 <BlockInfo
                         v-for="(info, index) of blocks"
-                        :key="info['@Block']"
-                        v-bind="{info, customClass: rounder(index, blocks.length, true)}"/>
+                        :key="`${info['@Block']}-${index}`"
+                        :info="info"/>
             </v-col>
         </v-row>
         <v-row class="d-flex flex-row align-start justify-start">
-            <v-col v-if="!withoutFilter && hasFilters && window.innerWidth > 1280" cols="3">
-                <div id="triggerWrapper">
-                    <ProductFilter v-bind="{filters, applyFilter}" v-if="!withoutFilter"/>
-                </div>
+            <v-col v-if="!withoutFilter && hasFilters && window.innerWidth > 1280 && productsGroups.length > 0" cols="3">
+                <ProductFilter v-bind="{filters}" v-if="!withoutFilter"/>
             </v-col>
             <v-col :cols="!withoutFilter && hasFilters && window.innerWidth > 1280 ? 9 : 12">
                 <div ref="productsColsRef">
-                    <ProductPresets v-if="showPresets" :presets="this.presets" :expands="window.innerWidth <= 1280"
-                    class="mb-2"
+                    <ProductPresets :presets="this.presets" :expands="window.innerWidth <= 1280"
+                                    class="mb-2"
                     />
-                    <div v-for="(products, $index) in productsGroups" :key="$index">
+                    <template v-for="(productsGroup, $index) in productsGroups">
                         <ProductsGrid
+                                :key="`products-grid-${$index}`"
+                                id="product-grid"
                                 v-if="presetsFilters.displayPages === 'grid'"
                                 v-bind="{
                                         onProductView: onProductView,
-                                        products: products,
-                                        actions: { productToCart: productToCart,
-                                                   productToCompare: productToCompare,
-                                                   productToFavourite: productToFavourite
-                                        },
+                                        products: productsGroup,
                                         gridCols,
                                         cardWidth,
                                         windowWidth,
                                         favouriteIds,
                                         compareIds
                         }"/>
-                        <ProductsList v-if="presetsFilters.displayPages === 'list'"
-                                      v-bind="{
+                        <ProductsList
+                                :key="`product-list-${$index}`"
+                                id="product-list"
+                                v-if="presetsFilters.displayPages === 'list'"
+                                v-bind="{
                                         onProductView: onProductView,
-                                        products: products,
-                                        actions: { productToCart: productToCart,
-                                                   productToCompare: productToCompare,
-                                                   productToFavourite: productToFavourite
-                                        },
+                                        products: productsGroup,
                                         favouriteIds,
                                         compareIds
                         }"/>
-                    </div>
+                    </template>
                     <infinite-loading v-if="presetsFilters.displayFormat === 'Лента'" :identifier="infiniteId" @infinite="infinityHandler" >
                         <v-card-title slot="spinner" class="white--text">Загрузка...</v-card-title>
                         <v-card-title slot="no-more" class="white--text">Вы всё просмотрели. Отличная работа!</v-card-title>
                         <v-card-title slot="no-results"></v-card-title>
                     </infinite-loading>
-                    <template  v-if="presetsFilters.displayFormat === 'Постраничный' && products">
-                        <div class="text-center" v-if="products.length > 0 && totalPages > 1">
+                    <template  v-if="presetsFilters.displayFormat === 'Постраничный'">
+                        <div class="text-center" v-if="currentPage < totalPages">
                             <v-pagination
                                     v-model="currentPage"
                                     :length="totalPages"
@@ -98,13 +93,10 @@
     import ProductsList from "../../components/products/List";
     import {rounder} from "../../utils/blockRoundCounter";
     import BlockInfo from "../../components/blocks/BlockInfo";
-    import gsap from 'gsap';
-    import ScrollTrigger from 'gsap/ScrollTrigger'
 
     export default {
         name: "CategoryProducts",
         data: () => ({
-            filterQuery: '',
             breadCrumbs: [],
             filters: {},
             hasFilters: true,
@@ -117,49 +109,29 @@
             favouriteIds: [],
             compareIds: [],
             infiniteId: + new Date(),
-            filterProps: [],
+
+            presets: [],
             presetsFilters: {sorting: 'Сначала дешевые',
                 pageSize: 20,
                 displayFormat: window.innerWidth > 1280 ? 'Постраничный' : 'Лента',
-                displayPages: window.innerWidth > 1280 ? 'grid' : 'list'},
-            showPresets: false,
-            blocks: [],
-            totalPages: 0,
+                displayPages: window.innerWidth > 1280 ? 'grid' : 'grid'},
+            showPresets: true,
+
+            window,
             gridCols: 4,
             cardWidth: 250,
             windowWidth: 1280,
-            currentPage: 1,
-            products: [],
-            title: '',
-            description: '',
-            loading: false,
-            window,
             clientHeight: window.innerHeight,
-            ScrollTrigger,
-            tls: null,
+
+            totalPages: 0,
+            currentPage: 1,
+
+            currentFilter: [],
+
+            blocks: [],
         }),
         props: ['withoutFilter', 'crumbs', 'runTrigger'],
-        created() {
-            this.scrollAnimation();
-        },
         methods: {
-            scrollAnimation() {
-                setTimeout(()=>{
-                    if(!this.runTrigger || this.tls)
-                        return;
-                    console.log(document.getElementById('crumbs') );
-                    this.tls = gsap.timeline({
-                        scrollTrigger: {
-                            trigger: '#triggerWrapper',
-                            start: "center center",
-                            end: "+=" + ( Math.round( document.getElementsByTagName('main')[0].offsetHeight / 2 + 250 ) ),
-                            pin: true,
-                            invalidateOnRefresh: true,
-                        }
-                    })
-                }, 500);
-
-            },
             calculateGridCols() {
                 const windowWidth = window.innerWidth;
                 this.windowWidth = windowWidth;
@@ -194,60 +166,18 @@
                     eventBus.$emit('update-main-bar');
                 });
             },
-            productToFavourite(id) {
-                this.updateProduct('Favourite', id);
-            },
-            productToCompare(id) {
-                this.updateProduct('Compare', id);
-            },
-            productToCart(id) {
-                this.updateProduct('Cart', id);
-            },
-            applyFilter(props, restoreFilter, restoreState) {
+            applyFilter(props) {
+                this.currentPage = 1;
                 console.log('apply filter');
-                this.filterProps = props
+                this.currentFilter = props
 
-                if(!restoreState) {
-                    console.log('not restore')
-                    this.page = 0;
-                    this.productsGroups = [];
-                    this.infiniteId += 1;
-                    this.currentPage = 1;
-                } else {
-                    console.log('restore')
-                    this.currentPage = parseInt(this.$route.query.page || '1');
-                }
-                this.filterQuery = ``;
-                props.forEach(prop => {
-                    console.log('prop: ' + JSON.stringify(prop))
-                    let values = [];
-                    if( prop.type === "radio") {
-                        console.log('prop values: ' + prop.values)
-                        prop.values.forEach( value => {
-                            if (value.checked) {
-                                values.push(value.name)
-                            }
-                        })
-                    }
-                    if( !restoreFilter ) {
-                        if (prop.name === "Цена")
-                            this.filterQuery += `&price=${prop.range[0]}-${prop.range[1]}`;
-                        if (prop.name === 'Мощность охлаждения, кВт')
-                            this.filterQuery += `&cool=${prop.range[0]}-${prop.range[1]}`;
-                        if (prop.name === 'Бренд' && values.length > 0)
-                            this.filterQuery += `&brand=${values}`;
-                        if (prop.name === 'Инверторное управление' && values.length > 0)
-                            this.filterQuery += `&inverter=${values}`
-                    }
-                })
-                console.log('restore state with props', props)
-                console.log('format: ', this.presetsFilters.displayFormat)
-                if( !restoreState )
-                    window.history.replaceState(null, '', `?page=${this.currentPage}${this.filterQuery}`);
+                console.log('applyFilter', props)
+                console.log('presetsFilters: ', this.presetsFilters)
+
                 if(this.presetsFilters.displayFormat === 'Постраничный')
                     this.loadHandler(this.currentPage);
                 else {
-                    this.initialProductRequest(props);
+                    this.loadProductsPage(props);
                 }
             },
             infinityHandler($state) {
@@ -256,64 +186,65 @@
                     {
                         pageSize: 20,
                         offset: this.page,
-                        filter: this.filterProps,
+                        filter: this.currentFilter,
                         sort: this.presetsFilters.sorting
                     }, {withCredentials: true})
                     .then(response => {
-                        this.page += 1;
                         const category_info = response.data;
-                        this.crumbs = category_info.breadcrumbs;
                         const block_info = category_info.block_info;
+
+                        this.loading = false;
+                        this.page += 1;
+
                         this.blocks = block_info.blocks;
 
-                            ScrollTrigger.refresh(true);
-
                         const products = category_info.products_info;
-                        this.loading = false;
                         if (products.length > 19) {
                             $state.loaded();
                             this.productsGroups.push(products);
-                            this.products = products;
                         } else {
                             $state.complete();
                         }
                     });
             },
+            scrollToCategoryTop() {
+                const productsContainer = document.getElementById('product-grid') || document.getElementById('product-list');
+                window.scrollTo({
+                    top: productsContainer.offsetTop,
+                    behavior: "smooth"
+                });
+            },
             loadHandler(page)
             {
-                if(page > 1) {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-                }
+                if(page > 1)
+                    this.scrollToCategoryTop();
 
                 console.log('set page: ', this.page);
-                window.history.replaceState(null, '', `?page=${this.currentPage}${this.filterQuery}`);
+
                 axios.post(getURL(`category/${this.$route.params.category_id}`),
                     {
                         pageSize: 20,
                         offset: this.currentPage - 1,
-                        filter: this.filterProps,
+                        filter: this.currentFilter,
                         sort: this.presetsFilters.sorting
                     }, {withCredentials: true})
                     .then(response => {
                         const category_info = response.data;
                         const products = category_info.products_info;
-                        eventBus.$emit('crumbs-changed', category_info.breadcrumbs);
+                        this.breadCrumbs = category_info.breadcrumbs;
+
                         const block_info = category_info.block_info;
                         this.blocks = block_info.blocks;
 
-                            ScrollTrigger.refresh(true);
-
                         this.totalPages = category_info.pages;
                         this.productsGroups = [products];
-                        this.products = products;
+
+                        eventBus.$emit('products-loaded');
                     });
             },
-            initialProductRequest(props) {
-                this.loading = true;
-                console.log('initial load, props: ', props)
+
+            loadProductsPage(props) {
+                console.log('load products: ', props)
                 axios.post(getURL(`category/${this.$route.params.category_id}`),
                     {
                         pageSize: 20,
@@ -322,80 +253,91 @@
                         sort: this.presetsFilters.sorting
                     }, {withCredentials: true})
                     .then(async response => {
-                        this.productsGroups = [];
-                        this.products = [];
-
                         this.page = 1;
+
                         const category_info = response.data;
-                        const products = category_info.products_info;
-                        eventBus.$emit('crumbs-changed', category_info.breadcrumbs);
-                        this.products = products;
-                        this.productsGroups.push(products);
                         const block_info = category_info.block_info;
-                        if( block_info )
-                        {
-                            this.title = block_info.title;
-                            this.description = block_info.description;
-                        }
+
+                        this.breadCrumbs = category_info.breadcrumbs;
+                        this.productsGroups = [category_info.products_info];
+
                         if(!props) {
                             this.filters = category_info.filters_info || {};
                             this.favouriteIds = category_info.favourite_ids || [];
                             this.compareIds = category_info.compare_ids || [];
                             this.hasFilters = Object.keys(this.filters).length > 0;
-                            this.showPresets = category_info.presets && Object.keys(category_info.presets).length > 0;
                             this.categories = category_info.categories;
                             this.presets = category_info.presets || [];
                         }
 
                         this.totalPages = category_info.pages;
                         this.blocks = block_info.blocks;
-                        ScrollTrigger.refresh(true);
-                        this.loading = false;
 
+                        eventBus.$emit('products-loaded');
                     });
             },
             rounder,
-        },
-        beforeMount() {
-            this.calculateGridCols();
-            window.addEventListener('resize', () => {
-                this.calculateGridCols();
-            });
-
-            eventBus.$on('product-view-closed', () => {
-                this.dialogInfo.show = false;
-            })
-            eventBus.$on('format-changed', (sortSelect, pageFormat, pageSize, displayPages) => {
-                console.log('format changed: ', sortSelect)
-                this.presetsFilters.sorting = sortSelect;
-                this.presetsFilters.pageSize = pageSize;
-                this.presetsFilters.displayPages = displayPages;
-                this.presetsFilters.displayFormat = pageFormat;
-
-                this.initialProductRequest(this.filterProps);
-            });
-
-            eventBus.$on('product-updated', (id, type) => {
-                if (type === 'compare') {
-                    const idInArray = this.compareIds.indexOf(id);
+            processUpdateProduct(typeName, productId) {
+                if (typeName === 'compare') {
+                    const idInArray = this.compareIds.indexOf(productId);
                     if( idInArray !== -1 ) {
                         this.compareIds.splice(idInArray, 1);
                     } else {
-                        this.compareIds.push(id);
+                        this.compareIds.push(productId);
                     }
-                } else if (type === 'favourite') {
-                    const idInArray = this.favouriteIds.indexOf(id);
+                } else if (typeName === 'favourite') {
+                    const idInArray = this.favouriteIds.indexOf(productId);
                     if( idInArray !== -1 ) {
                         this.favouriteIds.splice(idInArray, 1);
                     } else {
-                        this.favouriteIds.push(id);
+                        this.favouriteIds.push(productId);
                     }
                 }
-            });
+            },
+            onProductViewClosed() {
+                this.dialogInfo.show = false;
+            },
+            onDisplayFormatChanged(presetsFilter) {
+                this.presetsFilters = presetsFilter;
+                console.log('presetsFilters: ', this.presetsFilters)
+
+                this.loadProductsPage(this.currentFilter);
+            },
+            onProductUpdated(productId, typeName) {
+                this.processUpdateProduct(typeName, productId)
+            },
+            onProductMetaUpdated(productId, typeName) {
+                this.updateProduct(typeName, productId);
+                eventBus.$emit('product-updated', productId, typeName);
+            },
+            onFilterApplied(props) {
+                this.currentFilter = props;
+                this.loadProductsPage(props);
+            }
+        },
+        beforeDestroy() {
+            eventBus.$off('product-view-closed', this.onProductViewClosed);
+            eventBus.$off('presets/format-changed', this.onDisplayFormatChanged);
+            eventBus.$off('product-updated', this.onProductUpdated);
+            eventBus.$off('product-meta-updated', this.onProductMetaUpdated);
+            eventBus.$off('filter-applied', this.onFilterApplied);
+        },
+        beforeMount() {
+            this.calculateGridCols();
+
+            window.addEventListener('resize', this.calculateGridCols);
+
+            eventBus.$on('product-view-closed', this.onProductViewClosed);
+            eventBus.$on('presets/format-changed', this.onDisplayFormatChanged);
+            eventBus.$on('product-updated', this.onProductUpdated);
+            eventBus.$on('product-meta-updated', this.onProductMetaUpdated);
+
+            eventBus.$on('filter-applied', this.onFilterApplied);
 
             this.currentPage = parseInt(this.$route.query.page || '1');
-            this.initialProductRequest();
+            this.loadProductsPage();
         },
+
 
         components: {
             ProductsList,

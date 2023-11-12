@@ -1,29 +1,115 @@
 <template>
-    <v-app :style="cssProps">
+    <v-app :style="cssAppProps">
         <div>
             <!--<header>-->
-            <InfoPanel class="main__info-panel"/>
-            <MainAppBar class="main__app-bar"/>
-            <MinorAppBar class="minor__app-bar"/>
-
+            <template v-if="showHeader">
+                <info-panel/>
+                <main-app-bar/>
+                <minor-app-bar/>
+            </template>
+            <template v-if="showStatusBar">
+                <status-bar/>
+            </template>
             <!--<router/main view>-->
-            <v-row class="responsiveContainer">
-                <v-main>
-                    <router-view :key="$route.fullPath"/>
-                </v-main>
-            </v-row>
+            <v-main :style="cssBodyProps" style="min-height: 70vh;">
+                <router-view :key="$route.fullPath"/>
+            </v-main>
             <!--<router/main view>-->
 
-            <Footer/>
+            <template v-if="showFooter">
+                <Footer/>
+            </template>
 
             <!--<absolute components>-->
-            <ShortCuts/>
-            <StackPanel/>
-            <SnackController/>
+            <template v-if="showShortCuts">
+                <short-cuts/>
+            </template>
+
+            <template v-if="showStackPanel">
+                <stack-panel-controller/>
+            </template>
+
+            <template v-if="showSnackController">
+                <snack-controller/>
+            </template>
+
+            <template v-if="showNavigationIcons">
+                <navigation-icons></navigation-icons>
+            </template>
             <!--<absolute components/>-->
         </div>
     </v-app>
 </template>
+
+<script>
+    import MainAppBar from "./components/head/MainAppBar";
+    import MinorAppBar from "./components/head/MinorAppBar";
+    import Footer from "./components/Footer";
+    import SnackController from "./components/utility/SnackController";
+    import InfoPanel from "./components/head/InfoPanel";
+    import ShortCuts from "./components/utility/ShortCuts";
+    import loader from "./utils/customizeOptions";
+    import NavigationIcons from "./components/NavigationIcons";
+    import StatusBar from "./components/StatusBar";
+    import StackPanelController from "./components/stack-panels/StackPanelController";
+    import {getUser} from "./utils/profile";
+
+    export default {
+        name: 'App',
+        components: {
+            StackPanelController,
+            StatusBar,
+            NavigationIcons, ShortCuts, InfoPanel, SnackController, Footer, MinorAppBar, MainAppBar},
+        data: () => ({
+            cssAppProps: {
+            },
+            cssBodyProps: {
+
+            },
+            showHeader: false,
+            showFooter: false,
+            showShortCuts: false,
+            showStackPanel: false,
+            showSnackController: false,
+            showNavigationIcons: false,
+            showHeaderMobile: false,
+            showStatusBar: false,
+        }),
+        computed: {
+            isMobile: function() {
+                console.log('inner width: ', window.innerWidth)
+                return window.innerWidth < 960;
+            }
+        },
+        methods: {
+            updateOptions() {
+                const isMobile = window.innerWidth < 960;
+                console.log('update options, is mobile: ', isMobile);
+                this.cssBodyProps = loader().getAsObject(['Body', 'CSSProps'], isMobile);
+                this.cssAppProps = loader().getAsObject(['App', 'CSSProps'], isMobile);
+
+                this.showStatusBar = loader().getBool(['StatusBar'], isMobile);
+                this.showHeader = loader().getBool(['Header'], isMobile);
+                this.showFooter = loader().getBool(['Footer'], isMobile);
+                this.showShortCuts = loader().getBool(['ShortCuts'], isMobile);
+                this.showStackPanel = loader().getBool(['StackPanel'], isMobile);
+                this.showSnackController = loader().getBool(['SnackController'], isMobile);
+                this.showNavigationIcons = loader().getBool(['NavigationIcons'], isMobile);
+            }
+        },
+        async beforeCreate() {
+            await loader().loadOptions();
+
+            this.updateOptions();
+
+            getUser().trySession();
+        },
+        mounted() {
+            window.addEventListener('resize', this.updateOptions);
+        }
+    };
+</script>
+
 
 <style>
     :root {
@@ -116,29 +202,28 @@
     #helpers-right .v-icon:hover {
         color: blue
     }
+
+    .hover-underline-animation {
+        display: inline-block;
+        position: relative;
+        color: #ffffff;
+    }
+
+    .hover-underline-animation::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 1px;
+        bottom: 0;
+        left: 0;
+        background-color: #ebf8ff;
+        transform-origin: bottom left;
+        transition: transform 0.25s ease-out;
+    }
+
+    .hover-underline-animation:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
 </style>
-
-<script>
-    import MainAppBar from "./components/head/MainAppBar";
-    import MinorAppBar from "./components/head/MinorAppBar";
-    import Footer from "./components/Footer";
-    import StackPanel from "./components/stack-panels/StackPanel";
-    import SnackController from "./components/utility/SnackController";
-    import InfoPanel from "./components/head/InfoPanel";
-    import ShortCuts from "./components/utility/ShortCuts";
-    import loader from "./utils/customizeOptions";
-
-    export default {
-        name: 'App',
-        components: {ShortCuts, InfoPanel, SnackController, StackPanel, Footer, MinorAppBar, MainAppBar},
-        data: () => ({
-            cssProps: {
-            },
-        }),
-        async beforeMount() {
-            await loader().loadOptions();
-
-            this.cssProps = {background: loader().getOption(['Body', 'Background'])};
-        }
-    };
-</script>

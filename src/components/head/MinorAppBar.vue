@@ -1,7 +1,7 @@
 <template>
-    <v-sheet color="rgba(0,0,0,0.5)">
+    <v-sheet :color="background">
         <v-toolbar elevation="0"
-                   class="mx-auto px-0 transparent bottom-bar__main-scope" dark
+                   class="mx-auto px-0 transparent bottom-bar__main-scope" :dark="schema === 'dark'"
         >
             <div class="text-center d-flex flex-column justify-center" v-for="root in rootCategories" :key="root.id">
                 <v-menu offset-y open-on-hover >
@@ -40,32 +40,46 @@
 <script>
     import {getURL} from "../../utils/settings";
     import axios from "axios";
+    import loader from "../../utils/customizeOptions";
 
     export default {
         name: "MinorAppBar",
         data: () => ({
-            rootCategories: []
+            rootCategories: [],
+            background: 'white',
+            text: {
+                color: null,
+                size: null,
+                font: null
+            },
+            schema: null,
         }),
-        beforeCreate() {
+        async beforeCreate() {
             axios.get(getURL('categories'), {withCredentials: true})
                 .then(response => {
                     this.rootCategories = response.data;
                 })
+            await loader().loadOptions();
+
+            this.background = loader().getOption(['Header', 'MinorBar', 'Background']);
+            this.text = loader().getOption(['Header', 'MinorBar', 'Text']);
+            this.schema = loader().getOption(['Common', 'Schema']);
         }
     }
 </script>
 
 <style>
 
-    /deep/ .v-toolbar__content {
-        padding: 0px !important;
-    }
-
     .bottom-bar__main-scope {
         overflow: auto;
         overflow-y: hidden;
         width: 70vw;
     }
+
+    .v-toolbar__content {
+        padding: 0 !important;
+    }
+
     .minor-bar__adaptive-font {
         font-size: calc(var(--index) * 0.6)
     }

@@ -5,42 +5,38 @@
                 prepend-inner-icon="mdi-magnify"
                 placeholder="Поиск"
                 outlined
-                class="mx-2"
+                dense
+                class="mx-2 rounded-xxl"
                 :loading="loading"
         />
 
         <div class="mx-4" v-if="searchInfo && searchInfo.length > 0">
-            <v-virtual-scroll
-                    :bench="20"
-                    :items="searchInfo"
-                    height="800"
-                    item-height="170"
-                    style="overflow-x: hidden;"
-            >
-                <template v-slot:default="{ item }">
-                    <v-sheet v-on:click="goToProduct(item['@Product'])" 
+
+            <v-list style="height: 80vh; overflow-y: auto">
+                <v-list-item v-for="item of searchInfo" :key="item['@Product']">
+                    <v-sheet v-on:click="goToProduct(item['@Product'])"
                              style="cursor:pointer;"
                     >
 
-                            <HorizontalCard
-                                    v-bind="{
+                        <HorizontalCard
+                                v-bind="{
                                idx: item['@Product'],
                                title: item['Title'],
                                specialPrice: item['specialPrice'],
                                sale: item['sale'],
                                salePercent: item['salePercent'],
-                               price: item['Properties'][0],
+                               price: item['Properties'] ? item['Properties'][0] : '0',
                                source: item['Images'] && item['Images'].length > 0 ? item['Images'][0] : '',
-                               toSearch: true,
+                               elevation: 0
                             }"/>
                     </v-sheet>
 
                     <v-divider/>
-                </template>
-            </v-virtual-scroll>
+                </v-list-item>
+            </v-list>
         </div>
         <v-card-title v-if="searchString && searchString.length > 0 && !loading && (!searchInfo || searchInfo.length === 0)"
-                      class="d-flex flex-column align-center justify-center ">
+                      class="d-flex flex-column align-center justify-center text-break text-center">
             По вашему запросу ничего не найдено!
         </v-card-title>
     </v-card>
@@ -56,11 +52,11 @@
         components: {HorizontalCard},
         props: ['prop'],
         data () {
-          return {
-              searchString: '',
-              searchInfo: [],
-              loading: false,
-          }
+            return {
+                searchString: '',
+                searchInfo: [],
+                loading: false,
+            }
         },
         methods: {
             doSearch() {
@@ -97,8 +93,8 @@
             }
         },
         watch: {
-          searchString() {
-              this.doSearch();
+            searchString() {
+                this.doSearch();
             }
         },
         mounted() {

@@ -1,10 +1,9 @@
 <template>
-    <div v-if="categories.length > 0" class="d-flex flex-column justify-space-around">
+    <div v-if="categories.length > 0" class="d-flex flex-column justify-space-around pa-1">
         <v-row v-for="row of this.categoriesRows" :key="`row-${row.idx}`" class="d-flex flex-row float-left">
             <v-col v-for="category of row.col" :key="`col-${category.id}`"
                    :cols="row.col.length === innerGridCols ? Math.floor(12/innerGridCols) : Math.floor(12/row.col.length)"
                    >
-<!--                :cols="row.col.length === innerGridCols ? Math.floor(12/innerGridCols) : Math.floor(12/row.col.length)"-->
                 <CategoryCard v-bind="{
                     id: category.id,
                     title: category.title,
@@ -27,9 +26,16 @@
         data: () => {
             return {
                 categoriesRows: [],
-                innerGridCols: 6,
-                cardWidth: 180,
+                innerGridCols: 4,
+                cardWidth: 350,
                 windowWidth: 1281
+            }
+        },
+        watch: {
+            categories() {
+                this.calculateGridCols();
+                this.buildCategories();
+
             }
         },
         mounted() {
@@ -37,28 +43,30 @@
             window.addEventListener('resize', () => {
                 this.calculateGridCols();
             });
-
-            if (this.categories && this.categories.length > 0) {
-                this.categoriesRows = this.getCategoriesRows();
-            } else {
-                const unwatch = this.$watch('products', () => {
-                    if (!this.products) return;
-                    this.categoriesRows = this.getCategoriesRows();
-
-                    unwatch();
-                })
-            }
-
-            if( this.gridCols )
-                this.innerGridCols = this.gridCols;
+            this.buildCategories();
         },
         methods: {
+            buildCategories() {
+                if (this.categories && this.categories.length > 0) {
+                    this.categoriesRows = this.getCategoriesRows();
+                } else {
+                    const unwatch = this.$watch('products', () => {
+                        if (!this.products) return;
+                        this.categoriesRows = this.getCategoriesRows();
+
+                        unwatch();
+                    })
+                }
+
+                if( this.gridCols )
+                    this.innerGridCols = this.gridCols;
+            },
             calculateGridCols() {
                 const windowWidth = window.innerWidth;
                 console.log('window with: ', windowWidth);
                 if( windowWidth > 1280 ) {
                     this.windowWidth = 0.7 * windowWidth + 24;
-                    this.cardWidth = this.windowWidth * 0.19;
+                    this.cardWidth = this.windowWidth * 0.235;
                 }
                 if( windowWidth <= 1280 ) {
                     this.windowWidth = 0.8 * windowWidth;

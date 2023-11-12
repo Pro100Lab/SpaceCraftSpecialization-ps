@@ -1,50 +1,40 @@
 <template>
     <v-card class="fill-height elevation-0" color="white">
         <div class="mx-4" v-if="products && products.length > 0">
-            <v-virtual-scroll
-                    :bench="20"
-                    :items="products"
-                    height="800"
-                    item-height="200"
-                    style="overflow-x: hidden"
-            >
-                <template v-slot:default="{ item }">
-                    <v-list-item :key="item.id">
-                        <v-row style="width: 100%">
-                            <v-col cols="10">
-                                <HorizontalCard
-                                        v-bind="{
+            <v-list-item v-for="item of products" :key="item.id" dense>
+                <v-row style="width: 100%">
+                    <v-col cols="10">
+                        <HorizontalCard
+                                v-bind="{
                                 idx: item.id,
                                 title: item.title,
                                 price: item.price,
-                                source: item.images[0]
+                                source: item.images[0],
+                                elevation: 0
                                 }"/>
-                            </v-col>
-                            <v-col cols="2" class="d-flex flex-row justify-center">
-                                <v-row class="d-flex flex-row align-center justify-center">
-                                    <v-tooltip top>
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-icon
-                                                    color="red"
-                                                    large
-                                                    v-on="on"
-                                                    v-bind="attrs"
-                                                    v-on:click="deleteItem(item)"
-                                            >
-                                                mdi-trash-can-outline
-                                            </v-icon>
-                                        </template>
-                                        <span>
+                    </v-col>
+                    <v-col cols="2" class="d-flex flex-row justify-center">
+                        <v-row class="d-flex flex-row align-center justify-center">
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon
+                                            color="red"
+                                            large
+                                            v-on="on"
+                                            v-bind="attrs"
+                                            v-on:click="deleteItem(item)"
+                                    >
+                                        mdi-trash-can-outline
+                                    </v-icon>
+                                </template>
+                                <span>
                                             Удалить
                                         </span>
-                                    </v-tooltip>
-                                </v-row>
-                            </v-col>
+                            </v-tooltip>
                         </v-row>
-                    </v-list-item>
-                    <v-divider/>
-                </template>
-            </v-virtual-scroll>
+                    </v-col>
+                </v-row>
+            </v-list-item>
         </div>
         <v-card-title v-if="!products || products.length === 0"
                       class="d-flex flex-column align-center justify-center ">
@@ -69,7 +59,7 @@
         },
         methods: {
             deleteItem(item) {
-                axios.post(getURL(`product/update`), {id: item.id, placeholder: 'Favourite'}, {withCredentials: true}).then(
+                axios.post(getURL(`product/update`), {id: item.id, placeholder: 'Favourite', action: 'delete'}, {withCredentials: true}).then(
                     () => {
                         this.loadFavourite();
                         eventBus.$emit('product-updated', item.id, 'favourite');

@@ -1,53 +1,98 @@
 <template>
-    <v-card class="rounded-0 elevation-0" :style="cssProps">
+    <v-sheet :style="cssProps" class="py-1">
         <div class="app-bar__main-scope mx-auto">
-            <div class="d-flex flex-row align-center justify-space-between">
+            <v-row class="ma-0" align="end">
                 <!--<logo>-->
-                <div class="d-flex flex-row align-center">
-                <v-img :src="logo.image"
-                       v-if="logo.image"
-                       alt="SpaceCraftImage"
-                       v-on:click="goToMain()"
-                       contain
-                       class="app-bar__adaptive-icons"
-                       style="cursor: pointer;"
-                />
+                <v-col cols="3">
+                    <v-row class="ma-0" align="center">
+                        <v-col cols="4" class="pa-0">
+                            <v-img :src="logo.image"
+                                   v-if="logo.image"
+                                   alt="SpaceCraftImage"
+                                   v-on:click="goToMain()"
+                                   contain
+                                   style="cursor: pointer;"
+                            />
+                        </v-col>
+                        <!--</logo>-->
+                        <v-col cols="7" class="pa-0">
+                            <v-card-title class="app-bar__adaptive-title"
+                                          :style="{color: logo.textColor}"
+                                          v-html="logo.title"
+                                          v-if="logo.title">
+                            </v-card-title>
+                            <v-card-subtitle
+                                    class="app-bar__adaptive-subtitle"
+                                    :style="{color: logo.textColor}"
+                                    v-html="logo.subtitle"
+                                    v-if="logo.subtitle"
+                            >
+                            </v-card-subtitle>
+                        </v-col>
+                    </v-row>
+                </v-col>
 
-                <!--</logo>-->
-                <div class="d-flex flex-column">
-                    <v-card-title class="app-bar__adaptive-title"
-                                  :style="{color: logo.textColor}"
-                                  v-html="logo.title"
-                                  v-if="logo.title">
-                    </v-card-title>
-                    <v-card-subtitle
-                            class="app-bar__adaptive-subtitle"
-                            :style="{color: logo.textColor}"
-                            v-html="logo.subtitle"
-                            v-if="logo.subtitle"
-                    >
-                    </v-card-subtitle>
-                </div>
-                </div>
-                <div style="width: 20vw;" class="d-flex flex-row justify-start">
-                <block-info  :idx="blockId" v-if="blockId"></block-info>
-                </div>
-<!--                <div class="d-flex flex-column justify-center px-1">-->
-<!--                    <div class="d-flex flex-row my-1">-->
-<!--                        <v-icon class="app-bar__adaptive-features mx-1">mdi-clock-outline</v-icon>-->
-<!--                        <span class="app-bar__adaptive-features">Круглосуточно</span>-->
-<!--                    </div>-->
-<!--                    <div class="d-flex flex-row my-1">-->
-<!--                        <v-icon class="app-bar__adaptive-features mx-1">mdi-map-marker-outline</v-icon>-->
-<!--                        <span class="app-bar__adaptive-features">г. Шадринск, ул. Карла Маркса 90Б</span>-->
-<!--                    </div>-->
-<!--                    <a href="tel:+7 (951) 270-46-41" class="d-flex flex-row my-1 text-decoration-none">-->
-<!--                        <v-icon class="app-bar__adaptive-features mx-1">mdi-phone</v-icon>-->
-<!--                        <span class="app-bar__adaptive-features">+7 (951) 270-46-41</span>-->
-<!--                    </a>-->
-<!--                </div>-->
-                <!--</search and shortcuts>-->
-            </div>
+                <v-col cols="6">
+                    <v-row align="end">
+                        <v-col cols="7" class="d-flex flex-column align-start justify-end">
+                            <div class="d-flex flex-row">
+                                <v-icon size="16" class="app-bar__adaptive-features mx-1">mdi-clock-outline</v-icon>
+                                <span class="app-bar__adaptive-features-long">пн-пт 9:00-18:00</span>
+                            </div>
+                            <div class="d-flex flex-row">
+                                <v-icon size="16" class="app-bar__adaptive-features mx-1">mdi-map-marker-outline</v-icon>
+                                <span class="app-bar__adaptive-features-long overflow-x-hidden">Екатеринбург, ул. Анатолия Муранова, 18, 6.2</span>
+                            </div>
+                        </v-col>
+                        <v-col class="app-bar__adaptive-phone d-flex flex-column align-center justify-end" cols="5">+7 (912) 291-16-65</v-col>
+                    </v-row>
+                    <v-row class="d-flex flex-row">
+                        <v-col cols="7">
+                            <search-bar></search-bar>
+                        </v-col>
+                        <v-col cols="5">
+                            <v-btn dark class="rounded-xxl elevation-0" style="width: 100%; height: 40px;" :color="common.color" v-on:click="showCallView = true">
+                                <span class="app-bar__adaptive-phone-btn">Заказать звонок</span>
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </v-col>
+
+
+                <v-col class="d-flex flex-column" cols="3">
+                    <v-row align="end">
+                        <v-col  class="d-flex flex-column align-center justify-center pb-0" cols="4">
+                            <v-badge  color="red" overlap  bordered  :content="favourite" :value="favourite > 0">
+                                <v-icon x-small :color="common.color" class="app-bar__adaptive-icons" v-on:click="profile.openFavourite()">mdi-heart</v-icon>
+                            </v-badge>
+                            <span class="app-bar__adaptive-features-long">избранное</span>
+                        </v-col>
+
+                        <v-col class="d-flex flex-column align-center justify-center pb-0" cols="4">
+                            <v-badge color="red" overlap bordered :content="compare"  :value="compare > 0">
+                                <v-icon small :color="common.color" class="app-bar__adaptive-icons" v-on:click="$router.push('/compare')">mdi-abacus</v-icon>
+                            </v-badge>
+                            <span class="app-bar__adaptive-features-long">сравнить</span>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col class="d-flex flex-column align-center justify-center " cols="4">
+                            <v-icon class="app-bar__adaptive-icons" :color="common.color" v-on:click="profile.openCart()">mdi-cart-variant</v-icon>
+                            <span class="app-bar__adaptive-features-long">корзина</span>
+                        </v-col>
+                        <v-divider class="my-3" vertical></v-divider>
+
+                        <v-col class="d-flex flex-column align-start justify-center" cols="8">
+                            <p class="app-bar__adaptive-icons-text font-weight-bold ma-0" style="text-">{{cart}} товар{{ending}}
+                            </p>
+                            <p class="app-bar__adaptive-icons-text ma-0" v-if="cart">на сумму {{normalizePrice(cartSum)}} руб.
+                            </p>
+                        </v-col>
+                    </v-row>
+
+                    <!--</search and shortcuts>-->
+                </v-col>
+            </v-row>
         </div>
 
         <v-overlay
@@ -93,7 +138,7 @@
         </v-overlay>
 
 
-    </v-card>
+    </v-sheet>
 </template>
 
 <script>
@@ -102,11 +147,11 @@
     import eventBus from "../../utils/eventBus";
     import * as profile from "../../utils/profile";
     import loader from "../../utils/customizeOptions";
-    import BlockInfo from "../blocks/BlockInfo";
+    import SearchBar from "../utility/SearchBar";
 
     export default {
         name: "MainAppBar",
-        components: {BlockInfo},
+        components: {SearchBar},
         data: () => ({
             profile,
             items: [
@@ -141,8 +186,9 @@
                 subtitle: null,
                 textColor: null,
             },
-            cssProps: {background: '#f5f5f5'},
+            cssProps: {background: 'white'},
             blockId: null,
+            common: {color: 'primary'}
         }),
         async mounted() {
             this.loadUserInfo();
@@ -153,6 +199,7 @@
             this.logo.subtitle = loader().getOption(['Header', 'MainBar', 'Logo', 'Subtitle']);
             this.logo.textColor = loader().getOption(['Header', 'MainBar', 'Logo', 'Text']);
             this.blockId = loader().getOption(['Header', 'MainBar', 'Block']);
+            this.common.color = loader().getOption(['Common', 'Schema', 'Colors', 'Primary']);
 
             this.cssProps.backgroundColor = loader().getOption(['Header', 'Background'])
             eventBus.$on('update-main-bar', () => {
@@ -248,27 +295,50 @@
     }
 
     .app-bar__adaptive-title{
-        font-family: Moniqa, serif;
-        font-size: calc(var(--index) * 3) !important;
-        line-height: calc(var(--index) * 3) !important;
+        font-size: calc(var(--index) * 1) !important;
+        line-height: calc(var(--index) * 1) !important;
         font-weight: bold;
         cursor: default;
+    }
+
+    .app-bar-moniqa {
+        font-family: Moniqa, serif;
+    }
+    .app-bar-moniqa-thin {
+        font-family: Moniqa-Thin, serif;
     }
 
     .app-bar__adaptive-subtitle{
-        font-family: Moniqa-Thin, serif;
-        font-size: calc(var(--index) * 1.5) !important;
-        line-height: calc(var(--index) * 1.5) !important;
-        font-weight: bold;
+        font-size: calc(var(--index) * 1);
+        line-height: calc(var(--index) * 1) ;
+        font-weight: normal;
         cursor: default;
     }
 
-    .app-bar__adaptive-features {
-        font-size: calc(var(--index) * 0.7) !important;
+    .app-bar__adaptive-phone{
+        font-size: calc(var(--index) * 0.9);
     }
+
+    .app-bar__adaptive-phone-btn{
+        font-size: calc(var(--index) * 0.7);
+        font-weight: 400;
+    }
+
+
+    .app-bar__adaptive-features {
+        font-size: calc(var(--index) * 0.7);
+    }
+
+    .app-bar__adaptive-features-long {
+        font-size: calc(var(--index) * 0.45);
+    }
+
     .app-bar__adaptive-icons{
-        max-width: calc(var(--index) * 7);
-        height: calc(var(--index) * 7);
+        font-size: calc(var(--index) * 1) !important;
+    }
+
+    .app-bar__adaptive-icons-text{
+        font-size: calc(var(--index) * 0.6) !important;
     }
     @media screen and (max-width: 1280px){
         .app-bar__main-scope {

@@ -1,42 +1,41 @@
 <template>
-    <transition name="slide-fade" >
-        <div>
-            <v-overlay
-                    style="position:fixed;"
-                    :value="show"
+    <v-card
+            color="white"
+            ref="stackWrap"
+            class="fill-height main__stack-panel-right rounded-0"
+            :style="{'z-index': prop.zIndex}"
+    >
+        <v-card-actions class="py-0">
+            <v-icon v-if="prop.back" v-on:click="goBack">mdi-chevron-left</v-icon>
+            <v-card-title class="py-0">
+                {{prop.name}}
+            </v-card-title>
+            <v-spacer/>
+            <v-btn
+                    v-if="!prop.back"
                     v-on:click="closeStackPanel"
-                    :absolute="true"
-            />
-            <v-card
-                    v-if="show"
-                    color="white"
-                    ref="stackWrap"
-                    class="fill-height main__stack-panel-right"
-                    style="z-index: 5"
-            >
-                <v-card-actions v-if="panelName !== 'cart'">
-                    <v-card-title>
-                        {{panelNames[panelName]}}
-                    </v-card-title>
-                    <v-spacer/>
-                    <v-btn
-                            v-on:click="closeStackPanel"
-                            class="transparent elevation-0">
-                        Закрыть
-                        <v-icon>
-                            mdi-close
-                        </v-icon>
-                    </v-btn>
-                </v-card-actions>
-                <v-divider class="my-2" v-if="panelName !== 'cart'"/>
-                <CompareStackPanel v-if="panelName==='compare'" :prop="props"/>
-                <FavouriteStackPanel v-else-if="panelName==='favourite'" :prop="props"/>
-                <CartStackPanel v-else-if="panelName==='cart'" :prop="props"/>
-                <CalculateStackPanel v-else-if="panelName==='calculate'" :prop="props"/>
-                <SearchStackPanel v-else-if="panelName==='search'" :prop="props"/>
-            </v-card>
-        </div>
-    </transition>
+                    class="transparent elevation-0">
+                Закрыть
+                <v-icon>
+                    mdi-close
+                </v-icon>
+            </v-btn>
+        </v-card-actions>
+        <CompareStackPanel v-if="prop.panelName==='compare'" :prop="prop"/>
+        <FavouriteStackPanel v-else-if="prop.panelName==='favourite'" :prop="prop"/>
+        <CartStackPanel v-else-if="prop.panelName==='cart'" :prop="prop"/>
+        <CalculateStackPanel v-else-if="prop.panelName==='calculate'" :prop="prop"/>
+        <SearchStackPanel v-else-if="prop.panelName==='search'" :prop="prop"/>
+        <AccountStackPanel v-else-if="prop.panelName==='account'" :prop="prop"/>
+        <ChatListStackPanel v-else-if="prop.panelName==='chat_list'" :prop="prop"/>
+        <ChatStackPanel v-else-if="prop.panelName==='chat'" :prop="prop"/>
+        <InformationsListStackPanel v-else-if="prop.panelName==='information_list'" :prop="prop"/>
+        <AuthorizationStackPanel v-else-if="prop.panelName==='authorize'" :prop="prop"/>
+        <OrdersHistory v-else-if="prop.panelName==='orders'" :prop="prop"/>
+        <CurrencyStackPanel v-else-if="prop.panelName==='currency'" :prop="prop"/>
+        <EditProfileStackPanel v-else-if="prop.panelName==='edit-profile'" :prop="prop"/>
+        <InformationStackPanel v-else-if="prop.panelName==='information'"  :prop="prop"></InformationStackPanel>
+    </v-card>
 </template>
 
 <script>
@@ -46,50 +45,56 @@
     import CalculateStackPanel from "./CalculateStackPanel";
     import eventBus from "../../utils/eventBus";
     import SearchStackPanel from "./SearchStackPanel";
+    import AccountStackPanel from "./AccountStackPanel";
+    import ChatListStackPanel from "./ChatListStackPanel";
+    import InformationsListStackPanel from "./InformationsListStackPanel";
+    import AuthorizationStackPanel from "./AuthorizationStackPanel";
+    import OrdersHistory from "./OrdersHistory";
+    import CurrencyStackPanel from "./CurrencyStackPanel";
+    import ChatStackPanel from "./ChatStackPanel";
+    import EditProfileStackPanel from "./EditProfileStackPanel";
+    import InformationStackPanel from "./InformationStackPanel";
 
     export default {
         name: "StackPanel",
+        props: ['prop'],
         data() {
             return {
-                eventBus,
-                panelNames: {'compare': 'Сравнить',
-                    'favourite': 'Избранное',
-                    'cart': 'Корзина',
-                    'search': 'Поиск',
-                    'calculate': 'Рассчет мощности охлаждения'
-                },
                 showActions: true,
-                show: false,
-                panelName: '',
             }
         },
         methods: {
-            openStackPanel(contentType, props) {
-                if (contentType === 'compare' )
-                    this.$router.push('/compare')
-                else {
-                    this.show = true;
-                    this.panelName = contentType;
-                    this.props = props;
-                    return contentType;
-                }
-            },
             closeStackPanel() {
-                this.show = false;
+                eventBus.$emit('stack-panel-close');
+            },
+            goBack() {
+                eventBus.$emit('stack-panel-pop');
+            },
+            onShowActionsChanged(value) {
+                this.showActions = value;
             }
         },
         mounted() {
-            eventBus.$on('show-actions-changed', value => {
-                this.showActions = value;
-            })
-            eventBus.$on('stack-panel-open', (panelName, props) => {
-                this.openStackPanel(panelName, props);
-            });
-            eventBus.$on('stack-panel-close', () => {
-                this.show = false;
-            });
+            eventBus.$on('show-actions-changed', this.onShowActionsChanged);
         },
-        components: {SearchStackPanel, CalculateStackPanel, CartStackPanel, FavouriteStackPanel, CompareStackPanel}
+        beforeDestroy() {
+          eventBus.$off('show-actions-changed', this.onShowActionsChanged);
+        },
+        components: {
+            InformationStackPanel,
+            EditProfileStackPanel,
+            ChatStackPanel,
+            CurrencyStackPanel,
+            OrdersHistory,
+            AuthorizationStackPanel,
+            InformationsListStackPanel,
+            ChatListStackPanel,
+            AccountStackPanel,
+            SearchStackPanel,
+            CalculateStackPanel,
+            CartStackPanel,
+            FavouriteStackPanel,
+            CompareStackPanel}
     }
 </script>
 
@@ -111,5 +116,11 @@
     .slide-fade-enter, .slide-fade-leave-to {
         transform: translateX(200px);
         opacity: 0;
+    }
+
+    @media screen and (max-width: 640px) {
+        .main__stack-panel-right {
+            width: 100vw;
+        }
     }
 </style>

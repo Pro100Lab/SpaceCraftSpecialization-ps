@@ -1,5 +1,5 @@
 <template>
-    <v-card color="rgba(0,0,0,0.5)" class="d-flex flex-column">
+    <v-card :color="background" class="d-flex flex-column elevation-0">
         <section class="fl-footer">
         <div class="footer__main-scope mx-auto">
             <v-sheet :class="`transparent d-flex ${isMobile ?
@@ -9,9 +9,9 @@
                     <div class="d-flex flex-column align-center">
                         <v-img :src="logo.image"
                                v-if="logo.image"
-                               alt="Галактика. Хостел и гостиница"
+                               alt="Лого"
                                contain
-                               class="py-2 footer__logo"
+                               class="footer__logo"
                                style="cursor: pointer"
                                v-on:click="goToMain()"
                         />
@@ -27,7 +27,7 @@
                                 v-html="logo.subtitle"
 
                                 class="text-break footer__subtitle" >
-                            Хостел и гостиница
+
                         </v-card-subtitle>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                                    elevation="0"
                                    :to="info.value"
                                    style="height: inherit;">
-                                <span class="footer__subtitle">{{info.name}}</span>
+                                <span class="footer__subtitle hover-underline-animation">{{info.name}}</span>
                             </v-btn>
                         </div>
                             <div class="d-flex flex-column align-start">
@@ -55,7 +55,7 @@
                                        elevation="0"
                                        :to="info.value"
                                        style="height: inherit;">
-                                    <span class="footer__subtitle">{{info.name}}</span>
+                                    <span class="footer__subtitle hover-underline-animation">{{info.name}}</span>
                                 </v-btn>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
                            :elevation="0"
                            :ripple="true"
                            v-on:click="eventBus.$emit('show-callback')"
-                    ><span class="footer__title">Позвоните мне</span></v-btn>
+                    ><span class="footer__title" v-if="callMe && callMe.text">{{callMe.text}}</span></v-btn>
                 </div>
             </v-sheet>
         </div>
@@ -134,7 +134,11 @@
                     image: null,
                     title: null,
                     subtitle: null,
-                }
+                },
+                callMe: {
+                    text: null
+                },
+                background: null
             }
         },
         methods: {
@@ -169,13 +173,16 @@
             this.logo.image = loader().getOption(['Footer', 'Logo', 'Image']);
             this.logo.title = loader().getOption(['Footer', 'Logo', 'Title']);
             this.logo.subtitle = loader().getOption(['Footer', 'Logo', 'Subtitle']);
+
+            this.callMe.text = loader().getOption(['Footer', 'CallMe', 'Text']);
+
+            this.background = loader().getOption(['Footer', 'Background']);
         }
     }
 </script>
 
 <style>
     .footer__logo {
-        height: calc(var(--index) * 7);
         max-width: calc(var(--index) * 7);
     }
 

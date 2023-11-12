@@ -1,5 +1,5 @@
 <template>
-    <v-sheet color="transparent" class="bottom-bar__main-scope overflow-x-hidden">
+    <v-sheet color="transparent" class="bottom-bar__main-scope overflow-x-hidden pb-2">
         <v-row>
             <v-col class="fill-height">
                 <BreadCrumbs id="crumbs" v-bind:crumbs="breadCrumbs"></BreadCrumbs>
@@ -9,10 +9,9 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col v-if="hasCategories">
+            <v-col>
                 <CategoryGrid v-bind="{categories}"/>
-                <category-products :runTrigger="hasCategories && hasProducts"
-                                   v-if="hasProducts" class="my-2" :crumbs="breadCrumbs"></category-products>
+                <category-products class="my-2" :crumbs="breadCrumbs"></category-products>
             </v-col>
         </v-row>
         <v-row v-if="blocks && blocks.length > 0">
@@ -23,14 +22,6 @@
                         v-bind="{info, customClass: rounder(index, blocks.length, true)}"/>
             </v-col>
         </v-row>
-
-
-        <v-row v-if="!hasCategories && hasProducts">
-            <v-col class="py-0">
-                <category-products :runTrigger="!hasCategories && hasProducts" :crumbs="breadCrumbs"></category-products>
-            </v-col>
-        </v-row>
-
     </v-sheet>
 </template>
 
@@ -54,17 +45,6 @@
             blocks: [],
             loaded: false,
         }),
-        computed: {
-          hasProducts: function () {
-              console.log('has products: ', this.$route.params.category_id > 3, this.$route.params.category_id)
-            return this.loaded ? this.$route.params.category_id > 3 && this.$route.params.category_id < 22 : false;
-          },
-        hasCategories: function () {
-            console.log('has categories: ', this.categories.length)
-
-            return this.loaded ? this.categories.length : false;
-        },
-        },
         methods: {
             calculateGridCols() {
                 const windowWidth = window.innerWidth;
@@ -120,14 +100,14 @@
         },
         beforeMount() {
             this.calculateGridCols();
+
             window.addEventListener('resize', () => {
                 this.calculateGridCols();
             });
 
-            this.currentPage = parseInt(this.$route.query.page || '1');
             this.loadCategories();
 
-            eventBus.$on('crumbs-changed', crumbs=> {
+            eventBus.$on('crumbs-changed', crumbs => {
                 this.breadCrumbs = crumbs;
             })
         },

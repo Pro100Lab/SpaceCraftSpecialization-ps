@@ -1,6 +1,6 @@
 
 export const is_debug = process.env.NODE_ENV === 'development';
-export const debug_endpoint = '127.0.0.1:8000';
+export const debug_endpoint = 'localhost:8000';
 export const endpoint = 'flagman-climate.ru';
 export const schema = 'https';
 export const debug_schema = 'http';
@@ -10,9 +10,24 @@ export function getURL(urn) {
     return `${is_debug ? debug_schema : schema}://${is_debug ? debug_endpoint : endpoint}/${is_debug ? '' : 'api/'}${urn}`
 }
 
+export function getStatic(src) {
+    if(!src)
+        return ''
+
+    if(src.indexOf('http') !== -1 )
+        return src;
+
+    return getURL(`static/${src}`)
+}
+
 export function normalizePrice(price) {
     if (!price)
         return;
+
+    if(typeof(price) === 'string')
+        price.replace(',', '.');
+
+    price = Math.round(price)
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 

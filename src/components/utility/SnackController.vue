@@ -15,7 +15,7 @@
                         color="red"
                         text
                         v-bind="attrs"
-                        v-on:click="eventBus.$emit('stack-panel-open', snackbar.link)"
+                        v-on:click="eventBus.$emit('stack-panel-push', snackbar.link)"
                 >
                     {{ snackbar.linkName }}
                 </v-btn>
