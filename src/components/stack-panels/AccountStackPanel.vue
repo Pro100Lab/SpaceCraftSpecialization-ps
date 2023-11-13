@@ -32,12 +32,12 @@
                                 <v-sheet class="rounded-xl text-center" color="gray" style="width: 45%">
                                     <v-card-subtitle class="py-0 text-truncate">{{getUser().user.Name}}</v-card-subtitle>
                                 </v-sheet>
-                                <v-sheet v-if="getUser().user.Profile.phone" class="rounded-xxl text-center mx-1 " color="gray" style="width: 45%">
+                                <v-sheet v-if="getUser().user.Profile && getUser().user.Profile.phone" class="rounded-xxl text-center mx-1 " color="gray" style="width: 45%">
                                     <v-card-subtitle class="py-0 text-truncate">{{getUser().user.Profile.phone}}</v-card-subtitle>
                                 </v-sheet>
                             </v-card-actions>
                             <v-card-actions class="py-0">
-                                <v-sheet v-if="getUser().user.Profile.email" class="rounded-xxl text-center" color="gray" style="width: 92%">
+                                <v-sheet v-if="getUser().user.Profile && getUser().user.Profile.email" class="rounded-xxl text-center" color="gray" style="width: 92%">
                                     <v-card-subtitle class="py-0 text-truncate">{{getUser().user.Profile.email}}</v-card-subtitle>
                                 </v-sheet>
                             </v-card-actions>

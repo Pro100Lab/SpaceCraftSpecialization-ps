@@ -1,7 +1,7 @@
 <template>
     <v-col class="px-1" id="bottom">
-        <v-row>
-            <v-col v-if="!withoutFilter && hasFilters && window.innerWidth <= 1280 && productsGroups.length > 0"  cols="12">
+        <v-row v-if="hasFilters && window.innerWidth <= 1280 && productsGroups.length > 0" >
+            <v-col  cols="12">
                 <ProductFilter
                         v-bind="{filters,
                                  expands: true}"
@@ -16,13 +16,15 @@
                         :info="info"/>
             </v-col>
         </v-row>
-        <v-row class="d-flex flex-row align-start justify-start">
-            <v-col v-if="!withoutFilter && hasFilters && window.innerWidth > 1280 && productsGroups.length > 0" cols="3">
+        <template v-if="productsGroups && productsGroups.length > 0">
+        <v-row v-if="hasFilters" class="d-flex flex-row align-start justify-start" >
+            <v-col v-if="window.innerWidth > 1280 && productsGroups.length > 0" cols="3">
                 <ProductFilter v-bind="{filters}" v-if="!withoutFilter"/>
             </v-col>
-            <v-col :cols="!withoutFilter && hasFilters && window.innerWidth > 1280 ? 9 : 12">
+            <v-col :cols="window.innerWidth > 1280 ? 9 : 12">
                 <div ref="productsColsRef">
-                    <ProductPresets :presets="this.presets" :expands="window.innerWidth <= 1280"
+                    <ProductPresets
+                            :presets="this.presets" :expands="window.innerWidth <= 1280"
                                     class="mb-2"
                     />
                     <template v-for="(productsGroup, $index) in productsGroups">
@@ -77,6 +79,7 @@
                         v-bind="{dialogInfo}"/>
             </v-col>
         </v-row>
+        </template>
     </v-col>
 
 </template>
@@ -99,7 +102,7 @@
         data: () => ({
             breadCrumbs: [],
             filters: {},
-            hasFilters: true,
+            hasFilters: false,
             dialogInfo: {
                 show: false,
                 id: 0
@@ -237,7 +240,8 @@
                         this.blocks = block_info.blocks;
 
                         this.totalPages = category_info.pages;
-                        this.productsGroups = [products];
+                        if(products && products.length > 0)
+                            this.productsGroups = [products];
 
                         eventBus.$emit('products-loaded');
                     });
@@ -259,7 +263,8 @@
                         const block_info = category_info.block_info;
 
                         this.breadCrumbs = category_info.breadcrumbs;
-                        this.productsGroups = [category_info.products_info];
+                        if(category_info.products_info && category_info.products_info.length > 0)
+                            this.productsGroups = [category_info.products_info];
 
                         if(!props) {
                             this.filters = category_info.filters_info || {};

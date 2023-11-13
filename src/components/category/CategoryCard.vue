@@ -1,17 +1,16 @@
 <template>
     <v-hover v-slot="{ hover }" class="scale">
         <v-card
-                color="white"
+                dark
                 :elevation="hover ? 6 : 0"
                 width="240"
-                class="d-flex flex-column fill-height py-2"
+                class="d-flex flex-column fill-height py-2 transparent"
                 v-on:click="goToCategory(id)"
         >
             <v-img :src="getStatic(image)"
                    class="v-image__image--cover"
                    :class="hover ? 'scaled' : 'unscaled'"
                    height="150"
-                   contain
                     v-if="image"/>
             <v-card-title class="text-left text-wrap text-break category-card-adaptive"
                           v-if="title">

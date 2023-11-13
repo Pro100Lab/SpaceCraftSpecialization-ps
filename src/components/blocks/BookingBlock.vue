@@ -1,5 +1,5 @@
 <template>
-    <v-card color="transparent">
+    <v-card color="transparent" elevation="0">
         <v-card-title style="font-weight: normal; cursor: default">
             {{title}}
         </v-card-title>
@@ -13,7 +13,7 @@
                     range
             ></v-date-picker>
             <div class="d-flex flex-column mx-4" :class="isMobile ? 'py-4' : ''">
-                <v-form v-model="datesFormValid">
+                <v-form v-model="datesFormValid" id="dates-menu">
                     <v-text-field required
                                   :rules="dateRule"
                                   type="date-local"
@@ -38,26 +38,53 @@
                 <v-btn :disabled="!datesFormValid" v-on:click="calculateCostAndPresent">Рассчитать цену</v-btn>
             </div>
             <v-divider vertical v-if="calculated" class="mx-4"></v-divider>
-            <div v-if="calculated" class="d-flex flex-column align-start mx-4">
-                <v-card dark color="transparent">
+            <div v-if="calculated" class="d-flex flex-column align-start mx-4" id="variant-menu">
+                <v-card dark color="transparent" >
                     <v-card-title class="text-break">
                         Варианты размещения
                     </v-card-title>
-                    <v-sheet dark v-for="variant of bookingVariants" :key="`bookvar-${variant.id}`">
-                        <v-card-subtitle class="text-break">
-                            Гостей: {{peopleAmount}}<br/> Количество комнат: {{variant.roomsAmount}}<br/>
-                        </v-card-subtitle>
-                        <v-divider></v-divider>
-                        <v-card-subtitle>
-                            Цена: <strong>{{variant.price}} р. </strong>
-                        </v-card-subtitle>
-                        <v-btn block v-on:click="setBookingVariant(variant)">Выбрать</v-btn>
-                    </v-sheet>
+                    <template v-if="variantLoaded">
+                        <template v-if="bookingVariants.length > 0">
+                            <div :class="isMobile ? 'd-flex flex-row overflow-x-auto': 'd-flex flex-column align-center overflow-y-auto'"
+                                 :style="isMobile ? {'max-width': '80vw;'} : {'max-height': '300px'}">
+                                <v-sheet class="rounded-xxl" :class="isMobile ? 'mx-2' : 'my-2'" dark v-for="variant of bookingVariants" :key="`bookvar-${variant.id}`">
+                                    <v-card-subtitle class="text-break">
+                                        Гостей: {{variant.guests}}<br/>
+                                        Ночей: {{variant.nights}}<br/>
+                                        Количество комнат: {{variant.rooms}}
+
+                                    </v-card-subtitle>
+                                    <v-divider></v-divider>
+                                    <v-card-subtitle>
+                                        Тариф: <strong>{{variant.tariffName}}</strong><br/>
+                                        Цена: <strong>{{variant.price}} р. </strong>
+                                    </v-card-subtitle>
+                                    <v-btn  class="rounded-xxl" block v-on:click="setBookingVariant(variant)">Выбрать</v-btn>
+                                </v-sheet>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <v-card-title>
+                                Не нашлось свободных мест
+                            </v-card-title>
+                            <v-card-subtitle>
+                                Попробуйте выбрать другую дату
+                            </v-card-subtitle>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <div class="d-flex flex-column align-center">
+                            <v-progress-circular
+                                    indeterminate
+                                    color="red"
+                            ></v-progress-circular>
+                        </div>
+                    </template>
                 </v-card>
             </div>
             <v-divider vertical v-if="selectedBookingVariant" class="mx-4">
             </v-divider>
-            <v-card class="elevation-0" dark color="transparent" v-if="selectedBookingVariant">
+            <v-card class="elevation-0" dark color="transparent" v-if="selectedBookingVariant" id="contact-menu">
                 <v-card-title class="text-break">
                     Контактные данные
                 </v-card-title>
@@ -73,7 +100,12 @@
 
                 <v-divider></v-divider>
                 <v-btn :disabled="!contactFormValid" v-on:click="letsBookIt" block>
-                    Забронировать
+                    <span v-if="!bookingProcess">Забронировать</span>
+                    <v-progress-circular
+                            v-else
+                            indeterminate
+                            color="red"
+                    ></v-progress-circular>
                 </v-btn>
             </v-card>
             <v-card v-if="bookedTexts" dark color="transparent" class="mx-6">
@@ -101,6 +133,7 @@
                 peopleAmount: 1,
                 calculated: false,
                 bookingVariants: [],
+                variantLoaded: false,
                 selectedBookingVariant: null,
                 onlinePay: false,
                 offlinePay: true,
@@ -112,6 +145,7 @@
                 datesFormValid: false,
                 contactFormValid: false,
                 bookedTexts: null,
+                bookingProcess: false,
                 nights: 1,
                 dateRule: [
                     v => !!v || "Выберите дату",
@@ -142,6 +176,7 @@
             },
             letsBookIt()
             {
+                this.bookingProcess = true;
                 axios.post(getURL('session/checkout'), {
                     requisites: {
                         firstName: this.contactInfo.name,
@@ -149,100 +184,158 @@
                         phone: this.contactInfo.number,
                         email: '',
                         address: '',
-                        guests: this.peopleAmount,
+                        guests: this.selectedBookingVariant.guests,
+                        nights: this.selectedBookingVariant.nights,
                         dateOpen: this.dates[0],
                         dateClose: this.dates[1],
                         comment: '',
                         paymentMethod: 'При заселении',
                     },
-                    total: this.selectedBookingVariant.price
+                    total: this.selectedBookingVariant.price,
+                    places: this.selectedBookingVariant.places
                 }).then(() => {
                     this.bookedTexts = {
                         title: 'Спасибо за выбор нашего хостела!',
                         subtitle: 'ближайшее время с вами свяжутся для подтверждения брони'
                     }
 
+                    this.bookingProcess = false;
+                    this.variantLoaded = false;
                     this.contactFormValid = false;
                     this.selectedBookingVariant = null;
                     this.calculated = false;
                     setTimeout(() => {
                         this.bookedTexts = null;
                     }, 3500)
-                })
-            },
-            setBookingVariant(variant)
-            {
-                console.log(variant);
-                this.selectedBookingVariant = variant;
-            },
-            calculateCostAndPresent() {
-                this.calculated = true;
+                }).catch(() => {
+                    this.bookedTexts = {
+                        title: 'Во время бронирования возникла ошибка',
+                        subtitle: 'Попробуйте немного подождать и повторить бронь'}
 
-                this.bookingVariants = [];
-                const price = ( this.nights > 3 ? 800 : 1000 ) * this.peopleAmount * this.nights;
-                const roomsAmount = Math.ceil(this.peopleAmount / 4);
-                let id = 0;
-                this.bookingVariants.push({
-                    'id': id, 'price': price, 'roomsAmount': roomsAmount
+                    this.bookingProcess = false;
                 });
+    },
+    setBookingVariant(variant)
+    {
+        console.log(variant);
+        this.selectedBookingVariant = variant;
 
-                if( this.isMobile )
-                {
-                    window.scrollY = window.scrollY + window.innerHeight / 2;
-                }
-            }
-        },
-        watch: {
-            dates() {
-                const datesEntered = this.dates[0] && this.dates[1] && this.dates[0].length === 10 && this.dates[1].length === 10;
-                if( !datesEntered )
-                    return;
-
-                this.calculated = false;
-                this.selectedBookingVariant = null;
-                this.contactFormValid = false;
-
-                if( this.dates[0] > this.dates[1] ) {
-                    let tmp = this.dates[0];
-                    this.dates[0] = this.dates[1];
-                    this.dates[1] = tmp;
-                }
-
-                let nights = Math.ceil((Math.abs(new Date(this.dates[1]) - new Date(this.dates[0]))) / 3600000 / 24);
-                if( isNaN(nights) )
-                    nights = 0;
-                if( nights !== this.nights )
-                    this.nights = nights;
-            },
-            nights(newValue) {
-                console.log(newValue)
-                console.log(this.nights)
-                if( this.dates[0] && this.dates[0].length === 10 )
-                {
-                    console.log(this.dates[0])
-                    let finishDate = new Date(this.dates[0]);
-                    console.log(finishDate.toISOString().substr(0,10))
-
-                    finishDate.setDate(finishDate.getDate() + parseInt(newValue));
-
-                    this.dates[1] = finishDate.toISOString().substr(0,10);
-                    console.log(finishDate.toISOString().substr(0,10));
-
-                }
-            },
-            peopleAmount(newValue) {
-                this.calculated = false;
-                this.selectedBookingVariant = null;
-                this.contactFormValid = false;
-
-                if( parseInt(newValue) < 1 ) {
-                    this.peopleAmount = 1;
-                }
+        if( this.isMobile )
+        {
+            const doc = document.getElementById('contact-menu')
+            if(doc) {
+                console.log('scroll by doc')
+                window.scrollTo({top: doc.offsetTop, behavior: 'smooth'})
+            } else {
+                console.log('scroll by half height')
+                window.scrollTo({top: window.scrollY + window.innerHeight / 2, behavior: 'smooth'})
             }
         }
+    },
+    calculateCostAndPresent() {
+        this.calculated = true;
+        this.variantLoaded = false;
+
+        axios.post(getURL('admin/order/calculate_variants'), {
+            nights: this.nights,
+            dateOpen: this.dates[0],
+            dateClose: this.dates[1],
+            guests: this.peopleAmount
+        }).then(res => {
+            this.bookingVariants = res.data;
+            this.variantLoaded = true;
+            if( this.isMobile )
+            {
+                const doc = document.getElementById('variant-menu')
+                if(doc) {
+                    console.log('scroll by doc')
+                    window.scrollTo({top: doc.offsetTop, behavior: 'smooth'})
+                } else {
+                    console.log('scroll by half height')
+                    window.scrollTo({top: window.scrollY + window.innerHeight / 2, behavior: 'smooth'})
+                }
+            }
+        })
+    }
+    },
+    watch: {
+        dates() {
+            const datesEntered = this.dates[0] && this.dates[1] && this.dates[0].length === 10 && this.dates[1].length === 10;
+            if( !datesEntered )
+                return;
+
+            this.calculated = false;
+            this.selectedBookingVariant = null;
+            this.contactFormValid = false;
+            this.variantLoaded = false;
+
+            if( this.dates[0] > this.dates[1] ) {
+                let tmp = this.dates[0];
+                this.dates[0] = this.dates[1];
+                this.dates[1] = tmp;
+            }
+
+            let nights = Math.ceil((Math.abs(new Date(this.dates[1]) - new Date(this.dates[0]))) / 3600000 / 24);
+            if( isNaN(nights) )
+                nights = 0;
+            if( nights !== this.nights )
+                this.nights = nights;
+        },
+        nights(newValue) {
+            console.log(newValue)
+            console.log(this.nights)
+            if( this.dates[0] && this.dates[0].length === 10 )
+            {
+                console.log(this.dates[0])
+                let finishDate = new Date(this.dates[0]);
+                console.log(finishDate.toISOString().substr(0,10))
+
+                finishDate.setDate(finishDate.getDate() + parseInt(newValue));
+
+                this.dates[1] = finishDate.toISOString().substr(0,10);
+                console.log(finishDate.toISOString().substr(0,10));
+
+            }
+        },
+        peopleAmount(newValue) {
+            this.calculated = false;
+            this.selectedBookingVariant = null;
+            this.contactFormValid = false;
+            this.variantLoaded = false;
+
+            if( parseInt(newValue) < 1 ) {
+                this.peopleAmount = 1;
+            }
+        },
+    }
     }
 </script>
 
 <style scoped>
 
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(141, 35, 35, 0.3);
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        background: rgba(58, 238, 202, 0.6);
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb:window-inactive {
+        background: rgba(20, 47, 13, 0.3);
+    }
+
+    .period-checked:hover {
+        color: #00b8d4;
+    }
 </style>

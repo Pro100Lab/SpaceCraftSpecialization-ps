@@ -32,7 +32,7 @@
                     </v-row>
                 </v-col>
 
-                <v-col cols="6">
+                <v-col  v-if="cols.length > 1 && cols[1].Col2" cols="6">
                     <v-row align="end">
                         <v-col cols="7" class="d-flex flex-column align-start justify-end">
                             <div class="d-flex flex-row">
@@ -40,18 +40,22 @@
                                 <span class="app-bar__adaptive-features-long">пн-пт 9:00-18:00</span>
                             </div>
                             <div class="d-flex flex-row">
-                                <v-icon size="16" class="app-bar__adaptive-features mx-1">mdi-map-marker-outline</v-icon>
+                                <v-icon size="16" class="app-bar__adaptive-features mx-1">mdi-map-marker-outline
+                                </v-icon>
                                 <span class="app-bar__adaptive-features-long overflow-x-hidden">Екатеринбург, ул. Анатолия Муранова, 18, 6.2</span>
                             </div>
                         </v-col>
-                        <v-col class="app-bar__adaptive-phone d-flex flex-column align-center justify-end" cols="5">+7 (912) 291-16-65</v-col>
+                        <v-col class="app-bar__adaptive-phone d-flex flex-column align-center justify-end" cols="5">+7
+                            (912) 291-16-65
+                        </v-col>
                     </v-row>
                     <v-row class="d-flex flex-row">
                         <v-col cols="7">
                             <search-bar></search-bar>
                         </v-col>
                         <v-col cols="5">
-                            <v-btn dark class="rounded-xxl elevation-0" style="width: 100%; height: 40px;" :color="common.color" v-on:click="showCallView = true">
+                            <v-btn dark class="rounded-xxl elevation-0" style="width: 100%; height: 40px;"
+                                   :color="common.color" v-on:click="showCallView = true">
                                 <span class="app-bar__adaptive-phone-btn">Заказать звонок</span>
                             </v-btn>
                         </v-col>
@@ -59,33 +63,41 @@
                 </v-col>
 
 
-                <v-col class="d-flex flex-column" cols="3">
+                <v-col v-if="cols.length > 2 && cols[2].Col3" class="d-flex flex-column" cols="3">
                     <v-row align="end">
-                        <v-col  class="d-flex flex-column align-center justify-center pb-0" cols="4">
-                            <v-badge  color="red" overlap  bordered  :content="favourite" :value="favourite > 0">
-                                <v-icon x-small :color="common.color" class="app-bar__adaptive-icons" v-on:click="profile.openFavourite()">mdi-heart</v-icon>
+                        <v-col class="d-flex flex-column align-center justify-center pb-0" cols="4">
+                            <v-badge color="red" overlap bordered :content="favourite" :value="favourite > 0">
+                                <v-icon x-small :color="common.color" class="app-bar__adaptive-icons"
+                                        v-on:click="profile.openFavourite()">mdi-heart
+                                </v-icon>
                             </v-badge>
                             <span class="app-bar__adaptive-features-long">избранное</span>
                         </v-col>
 
                         <v-col class="d-flex flex-column align-center justify-center pb-0" cols="4">
-                            <v-badge color="red" overlap bordered :content="compare"  :value="compare > 0">
-                                <v-icon small :color="common.color" class="app-bar__adaptive-icons" v-on:click="$router.push('/compare')">mdi-abacus</v-icon>
+                            <v-badge color="red" overlap bordered :content="compare" :value="compare > 0">
+                                <v-icon small :color="common.color" class="app-bar__adaptive-icons"
+                                        v-on:click="$router.push('/compare')">mdi-abacus
+                                </v-icon>
                             </v-badge>
                             <span class="app-bar__adaptive-features-long">сравнить</span>
                         </v-col>
                     </v-row>
                     <v-row>
                         <v-col class="d-flex flex-column align-center justify-center " cols="4">
-                            <v-icon class="app-bar__adaptive-icons" :color="common.color" v-on:click="profile.openCart()">mdi-cart-variant</v-icon>
+                            <v-icon class="app-bar__adaptive-icons" :color="common.color"
+                                    v-on:click="profile.openCart()">mdi-cart-variant
+                            </v-icon>
                             <span class="app-bar__adaptive-features-long">корзина</span>
                         </v-col>
                         <v-divider class="my-3" vertical></v-divider>
 
                         <v-col class="d-flex flex-column align-start justify-center" cols="8">
-                            <p class="app-bar__adaptive-icons-text font-weight-bold ma-0" style="text-">{{cart}} товар{{ending}}
+                            <p class="app-bar__adaptive-icons-text font-weight-bold ma-0" style="text-">{{cart}}
+                                товар{{ending}}
                             </p>
-                            <p class="app-bar__adaptive-icons-text ma-0" v-if="cart">на сумму {{normalizePrice(cartSum)}} руб.
+                            <p class="app-bar__adaptive-icons-text ma-0" v-if="cart">на сумму
+                                {{normalizePrice(cartSum)}} руб.
                             </p>
                         </v-col>
                     </v-row>
@@ -155,7 +167,7 @@
         data: () => ({
             profile,
             items: [
-                { title: '+7 963 040 47 18', phone: true }
+                {title: '+7 963 040 47 18', phone: true}
             ],
             cart: 0,
             viewed: 0,
@@ -188,19 +200,31 @@
             },
             cssProps: {background: 'white'},
             blockId: null,
-            common: {color: 'primary'}
+            common: {color: 'primary'},
+            cols: [
+                {
+                    name: 'logo',
+                    cols: 2,
+                },
+                {
+                    name: 'icons',
+                    cols: 4,
+                }
+            ]
         }),
         async mounted() {
             this.loadUserInfo();
 
             await loader().loadOptions();
-            this.logo.image = loader().getOption(['Header', 'MainBar', 'Logo', 'Image']);
-            this.logo.title = loader().getOption(['Header', 'MainBar', 'Logo', 'Title']);
-            this.logo.subtitle = loader().getOption(['Header', 'MainBar', 'Logo', 'Subtitle']);
-            this.logo.textColor = loader().getOption(['Header', 'MainBar', 'Logo', 'Text']);
+            this.logo.image = loader().getOption(['Header', 'MainBar', 'Row', 'Col1', 'Items', 'Logo', 'Image']);
+            this.logo.title = loader().getOption(['Header', 'MainBar','Row', 'Col1', 'Items', 'Logo', 'Title']);
+            this.logo.subtitle = loader().getOption(['Header', 'MainBar', 'Row', 'Col1', 'Items', 'Logo', 'Subtitle']);
+            this.logo.textColor = loader().getOption(['Header', 'MainBar', 'Row', 'Col1', 'Items', 'Logo', 'Text']);
             this.blockId = loader().getOption(['Header', 'MainBar', 'Block']);
             this.common.color = loader().getOption(['Common', 'Schema', 'Colors', 'Primary']);
 
+            this.cols = loader().getAsObjects(['Header', 'MainBar', 'Row'])
+            console.log('cols settings: ', this.cols);
             this.cssProps.backgroundColor = loader().getOption(['Header', 'Background'])
             eventBus.$on('update-main-bar', () => {
                 this.loadUserInfo();
@@ -213,7 +237,7 @@
         computed: {
             ending: function () {
                 let end = 'ов';
-                if( this.cart > 9 && this.cart < 20)
+                if (this.cart > 9 && this.cart < 20)
                     end = 'ов'
                 switch (this.cart % 10) {
                     case 1:
@@ -227,7 +251,7 @@
                     default:
                         end = 'ов';
                 }
-                return  end;
+                return end;
             }
         },
         methods: {
@@ -279,7 +303,7 @@
 <style>
     .app-bar__main-scope {
         width: 70vw;
-        font-family: system-ui,-apple-system,Arial,sans-serif;
+        font-family: system-ui, -apple-system, Arial, sans-serif;
     }
 
     @font-face {
@@ -294,7 +318,7 @@
         url(./../../assets/fonts/Moniqa-ExtLtCondItaDisplay.ttf) format("truetype");
     }
 
-    .app-bar__adaptive-title{
+    .app-bar__adaptive-title {
         font-size: calc(var(--index) * 1) !important;
         line-height: calc(var(--index) * 1) !important;
         font-weight: bold;
@@ -304,22 +328,23 @@
     .app-bar-moniqa {
         font-family: Moniqa, serif;
     }
+
     .app-bar-moniqa-thin {
         font-family: Moniqa-Thin, serif;
     }
 
-    .app-bar__adaptive-subtitle{
+    .app-bar__adaptive-subtitle {
         font-size: calc(var(--index) * 1);
-        line-height: calc(var(--index) * 1) ;
+        line-height: calc(var(--index) * 1);
         font-weight: normal;
         cursor: default;
     }
 
-    .app-bar__adaptive-phone{
+    .app-bar__adaptive-phone {
         font-size: calc(var(--index) * 0.9);
     }
 
-    .app-bar__adaptive-phone-btn{
+    .app-bar__adaptive-phone-btn {
         font-size: calc(var(--index) * 0.7);
         font-weight: 400;
     }
@@ -333,39 +358,46 @@
         font-size: calc(var(--index) * 0.45);
     }
 
-    .app-bar__adaptive-icons{
+    .app-bar__adaptive-icons {
         font-size: calc(var(--index) * 1) !important;
     }
 
-    .app-bar__adaptive-icons-text{
+    .app-bar__adaptive-icons-text {
         font-size: calc(var(--index) * 0.6) !important;
     }
-    @media screen and (max-width: 1280px){
+
+    @media screen and (max-width: 1280px) {
         .app-bar__main-scope {
             width: 85vw;
         }
+
         .app-bar__adaptive-features {
             font-size: calc(var(--index) * 0.8) !important;
         }
     }
-    @media screen and (max-width: 960px){
+
+    @media screen and (max-width: 960px) {
         .app-bar__main-scope {
             width: 100%;
         }
+
         .app-bar__adaptive-features {
             font-size: calc(var(--index) * 0.9) !important;
         }
     }
 
     .v-ripple__container {
-        display:none !important;
+        display: none !important;
     }
+
     .slide-fade-enter-active {
         transition: all .3s;
     }
+
     .slide-fade-leave-active {
         transition: all .3s;
     }
+
     .slide-fade-enter, .slide-fade-leave-to {
         transform: translateX(200px);
         opacity: 0;

@@ -4,8 +4,14 @@
             <v-icon v-on:click="navigateBack" v-if="backLink">
                 mdi-chevron-left
             </v-icon>
-            <search-bar/>
-            <v-icon color="white" v-on:click="showChatStackPanel">mdi-chat-processing-outline</v-icon>
+            <template v-if="settings.Logo">
+                <div class="d-flex flex-row align-center" v-on:click="$router.push('/')">
+                <v-img v-if="siteLogo.Image" :src="siteLogo.Image" alt="logo" width="40px" height="40px" contain></v-img>
+                <v-card-title v-if="siteLogo.Title">{{siteLogo.Title}}</v-card-title>
+                </div>
+            </template>
+            <search-bar v-if="settings.Search"/>
+            <v-icon v-if="settings.Chat" color="white" v-on:click="showChatStackPanel">mdi-chat-processing-outline</v-icon>
         </v-card-actions>
     </v-sheet>
 </template>
@@ -26,8 +32,9 @@
                 name: '',
                 cssProps: {},
                 backLink: '',
-                siteLogo: null,
+                siteLogo: {},
                 path: [],
+                settings: {}
             }
         },
         computed: {
@@ -60,8 +67,14 @@
             await getLoader().loadOptions();
 
             this.cssProps = getLoader().getAsObject(['StatusBar', 'CSSProps'], this.isMobile);
-            this.siteLogo = loader().getOption(['Header', 'MainBar', 'Logo', 'Image']);
+            this.siteLogo.Image = loader().getOption(['Header', 'MainBar', 'Logo', 'Image']);
+            this.siteLogo.Title = loader().getOption(['Header', 'MainBar', 'Logo', 'Title']);
 
+            this.settings.Chat = getLoader().getBool(['StatusBar', 'Items', 'Chat']);
+            this.settings.Search = getLoader().getBool(['StatusBar', 'Items', 'Search']);
+            this.settings.Logo = getLoader().getBool(['StatusBar', 'Items', 'Logo']);
+
+            console.log('settings loaded: ', this.settings);
             eventBus.$on('navigation-changed', path => {
                 this.path = path;
                 this.makeBackLink();

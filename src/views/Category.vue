@@ -8,7 +8,7 @@
                         v-bind="{info: {'Type': 1, 'Description': description}, customClass: 'rounded-t-0'}"/>
             </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="categories && categories.length > 0">
             <v-col>
                 <CategoryGrid v-bind="{categories}"/>
                 <category-products class="my-2" :crumbs="breadCrumbs"></category-products>

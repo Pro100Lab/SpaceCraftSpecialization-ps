@@ -220,6 +220,11 @@
                 cssClass: ''
             }
         },
+        computed: {
+            isMobile: function() {
+                return window.innerWidth < 960;
+            }
+        },
         methods: {
             async loadBlock(id) {
                 this.blockInfo = await axios.get(getURL(`block/${id}`));
@@ -238,7 +243,11 @@
                 this.title = info['Title'];
                 this.description = info['Description'];
                 this.cssProps = info['CSSProps'];
-                this.cssClass = info['CSSClass']
+                this.cssClass = this.cssClass || info['CSSClass'];
+
+                this.cssProps = this.cssProps && Object(this.cssProps).entries > 0 ? this.cssProps : null;
+                console.log('block', this.id, ' css props: ', this.cssProps, ' css class: ', this.cssClass)
+
                 const content = info['Content'];
                 if( content && !Array.isArray(content) )
                     this.images = Object.keys(content);
@@ -321,9 +330,12 @@
         async mounted() {
             await getLoader().loadOptions();
             this.settings.schema = getLoader().getOption(['Common', 'Schema']);
-            this.settings.block.width = getLoader().getOption(['Common', 'Block', 'Width']);
+            this.settings.block.width = (this.isMobile && getLoader().getOption(['Common', 'Block', 'Mobile', 'Width']) )
+                || getLoader().getOption(['Common', 'Block', 'Width']);
             this.settings.block.background = getLoader().getOption(['Common', 'Block', 'Background']);
 
+            this.cssClass = this.cssClass || getLoader().getOption(['Common', 'Block', 'Class']);
+            console.log('settings: ', this.settings);
             this.coords = [getLoader().getOption(['Common', 'Block', 'Map', 'Coords', 'x']),
                 getLoader().getOption(['Common', 'Block', 'Map', 'Coords', 'y'])
             ];
