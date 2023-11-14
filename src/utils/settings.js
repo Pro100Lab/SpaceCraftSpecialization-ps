@@ -1,7 +1,7 @@
 
 export const is_debug = process.env.NODE_ENV === 'development';
 export const debug_endpoint = 'localhost:8000';
-export const endpoint = 'galaxy-hotels.ru';
+export const endpoint = 'gorenerga.ru';
 export const schema = 'https';
 export const debug_schema = 'http';
 export const endpoint_version = 'v1';
