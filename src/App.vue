@@ -11,7 +11,7 @@
                 <status-bar/>
             </template>
             <!--<router/main view>-->
-            <v-main :style="cssBodyProps" style="min-height: 70vh;">
+            <v-main :style="cssBodyProps" style="min-height: 50vh;">
                 <router-view :key="$route.fullPath"/>
             </v-main>
             <!--<router/main view>-->
