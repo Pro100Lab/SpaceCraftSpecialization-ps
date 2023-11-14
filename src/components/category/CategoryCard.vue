@@ -11,6 +11,7 @@
                    class="v-image__image--cover"
                    :class="hover ? 'scaled' : 'unscaled'"
                    height="150"
+                   contain
                     v-if="image"/>
             <v-card-title class="text-left text-wrap text-break category-card-adaptive"
                           v-if="title">

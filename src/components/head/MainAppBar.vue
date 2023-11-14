@@ -32,7 +32,7 @@
                     </v-row>
                 </v-col>
 
-                <v-col  v-if="cols.length > 1 && cols[1].Col2" cols="6">
+                <v-col  cols="6">
                     <v-row align="end">
                         <v-col cols="7" class="d-flex flex-column align-start justify-end">
                             <div class="d-flex flex-row">
@@ -63,7 +63,7 @@
                 </v-col>
 
 
-                <v-col v-if="cols.length > 2 && cols[2].Col3" class="d-flex flex-column" cols="3">
+                <v-col class="d-flex flex-column" cols="3">
                     <v-row align="end">
                         <v-col class="d-flex flex-column align-center justify-center pb-0" cols="4">
                             <v-badge color="red" overlap bordered :content="favourite" :value="favourite > 0">
@@ -93,7 +93,7 @@
                         <v-divider class="my-3" vertical></v-divider>
 
                         <v-col class="d-flex flex-column align-start justify-center" cols="8">
-                            <p class="app-bar__adaptive-icons-text font-weight-bold ma-0" style="text-">{{cart}}
+                            <p class="app-bar__adaptive-icons-text font-weight-bold ma-0">{{cart}}
                                 товар{{ending}}
                             </p>
                             <p class="app-bar__adaptive-icons-text ma-0" v-if="cart">на сумму
@@ -216,10 +216,10 @@
             this.loadUserInfo();
 
             await loader().loadOptions();
-            this.logo.image = loader().getOption(['Header', 'MainBar', 'Row', 'Col1', 'Items', 'Logo', 'Image']);
-            this.logo.title = loader().getOption(['Header', 'MainBar','Row', 'Col1', 'Items', 'Logo', 'Title']);
-            this.logo.subtitle = loader().getOption(['Header', 'MainBar', 'Row', 'Col1', 'Items', 'Logo', 'Subtitle']);
-            this.logo.textColor = loader().getOption(['Header', 'MainBar', 'Row', 'Col1', 'Items', 'Logo', 'Text']);
+            this.logo.image = loader().getOption(['Header', 'MainBar', 'Logo', 'Image']);
+            this.logo.title = loader().getOption(['Header', 'MainBar', 'Logo', 'Title']);
+            this.logo.subtitle = loader().getOption(['Header', 'MainBar', 'Logo', 'Subtitle']);
+            this.logo.textColor = loader().getOption(['Header', 'MainBar', 'Logo', 'Text']);
             this.blockId = loader().getOption(['Header', 'MainBar', 'Block']);
             this.common.color = loader().getOption(['Common', 'Schema', 'Colors', 'Primary']);
 
