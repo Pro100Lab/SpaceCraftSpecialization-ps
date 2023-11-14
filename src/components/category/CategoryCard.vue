@@ -1,7 +1,6 @@
 <template>
     <v-hover v-slot="{ hover }" class="scale">
         <v-card
-                dark
                 :elevation="hover ? 6 : 0"
                 width="240"
                 class="d-flex flex-column fill-height py-2 transparent"
