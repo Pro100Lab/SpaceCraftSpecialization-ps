@@ -26,7 +26,7 @@
                     />
                     <v-img
                             class="rounded-xl"
-                            style="max-width: 50%"
+                            style="max-width: 50vw;"
                             contain :src="getStatic(images[0])"
                     >
                     </v-img>
@@ -245,7 +245,7 @@
                 this.cssProps = info['CSSProps'];
                 this.cssClass = this.cssClass || info['CSSClass'];
 
-                this.cssProps = this.cssProps && Object(this.cssProps).entries > 0 ? this.cssProps : null;
+                // this.cssProps = this.cssProps && Object(this.cssProps).entries > 0 ? this.cssProps : null;
                 console.log('block', this.id, ' css props: ', this.cssProps, ' css class: ', this.cssClass)
 
                 const content = info['Content'];

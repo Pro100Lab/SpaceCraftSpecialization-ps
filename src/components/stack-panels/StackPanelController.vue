@@ -2,6 +2,7 @@
     <div>
         <v-overlay
                 style="position:fixed;"
+                id="stack-panel-overlay"
                 :value="stackPanelStack.length > 0"
                 v-on:click="closeStackPanel"
                 :absolute="true"
