@@ -192,14 +192,14 @@
 <!--                            </span>-->
 <!--                        </v-tooltip>-->
 <!--                    </v-row>-->
-                    <v-row class="px-4 my-4 d-flex flex-row align-center "
-                           style="font-size: 0.8rem; display: inline"
-                           v-if="this.title !== 'Стандартная установка кондиционера'"
-                    >
-                        <span>
-                        Обратите <b>внимание</b>, цена установки рассчитывается отдельно по ценам, указанным в <a href="/category/2"> разделе работ</a>. Конечная цена складывается из необходимых расходных материалов
-                    </span>
-                    </v-row>
+<!--                    <v-row class="px-4 my-4 d-flex flex-row align-center "-->
+<!--                           style="font-size: 0.8rem; display: inline"-->
+<!--                           v-if="this.title !== 'Стандартная установка кондиционера'"-->
+<!--                    >-->
+<!--                        <span>-->
+<!--                        Обратите <b>внимание</b>, цена установки рассчитывается отдельно по ценам, указанным в <a href="/category/2"> разделе работ</a>. Конечная цена складывается из необходимых расходных материалов-->
+<!--                    </span>-->
+<!--                    </v-row>-->
                     <v-card-subtitle class="text-break"  v-html="description.replaceAll(';', '&lt;br/&gt;• ')
                                                                             .replaceAll('. ', '&lt;br/&gt;• ')">
                     </v-card-subtitle>
