@@ -52,5 +52,6 @@
 
     .unscaled {
         transition: .2s; /* Время эффекта */
+        display: block; /* Убираем небольшой отступ снизу */
     }
 </style>

@@ -173,25 +173,25 @@
                     </v-card-subtitle>
                     <v-card-subtitle style="font-size: 0.8rem;">Артикул: {{art}}</v-card-subtitle>
 
-                    <v-row class="mx-3 flex-nowrap" v-if="this.title !== 'Стандартная установка кондиционера'">
-                        <v-checkbox label="Требуется установка" v-model="needSetup" />
-                        <v-tooltip top>
-                            <template v-slot:activator="{on, attrs}">
-                                <v-icon
-                                        v-on="on"
-                                        v-bind="attrs"
-                                        class="pl-4"
-                                        small
-                                        dense
-                                >
-                                    mdi-help-circle
-                                </v-icon>
-                            </template>
-                            <span>
-                                Стоимость установки расчитывается индивидуально
-                            </span>
-                        </v-tooltip>
-                    </v-row>
+<!--                    <v-row class="mx-3 flex-nowrap" v-if="this.title !== 'Стандартная установка кондиционера'">-->
+<!--                        <v-checkbox label="Требуется установка" v-model="needSetup" />-->
+<!--                        <v-tooltip top>-->
+<!--                            <template v-slot:activator="{on, attrs}">-->
+<!--                                <v-icon-->
+<!--                                        v-on="on"-->
+<!--                                        v-bind="attrs"-->
+<!--                                        class="pl-4"-->
+<!--                                        small-->
+<!--                                        dense-->
+<!--                                >-->
+<!--                                    mdi-help-circle-->
+<!--                                </v-icon>-->
+<!--                            </template>-->
+<!--                            <span>-->
+<!--                                Стоимость установки расчитывается индивидуально-->
+<!--                            </span>-->
+<!--                        </v-tooltip>-->
+<!--                    </v-row>-->
                     <v-row class="px-4 my-4 d-flex flex-row align-center "
                            style="font-size: 0.8rem; display: inline"
                            v-if="this.title !== 'Стандартная установка кондиционера'"
