@@ -1,5 +1,5 @@
 <template>
-    <v-col class="px-1" id="bottom">
+    <v-col class="px-1" id="category-products">
         <v-row v-if="hasFilters && window.innerWidth <= 1280 && productsGroups.length > 0" >
             <v-col  cols="12">
                 <ProductFilter
@@ -134,6 +134,12 @@
             blocks: [],
         }),
         props: ['withoutFilter', 'crumbs', 'runTrigger'],
+        watch: {
+            filters() {
+                this.hasFilters = this.filters && Object(this.filters).keys().length > 0;
+                console.log('has filters: ', this.hasFilters)
+            }
+        },
         methods: {
             calculateGridCols() {
                 const windowWidth = window.innerWidth;

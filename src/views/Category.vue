@@ -11,6 +11,10 @@
         <v-row v-if="categories && categories.length > 0">
             <v-col>
                 <CategoryGrid v-bind="{categories}"/>
+            </v-col>
+        </v-row>
+        <v-row v-if="products && products.length > 0">
+            <v-col>
                 <category-products class="my-2" :crumbs="breadCrumbs"></category-products>
             </v-col>
         </v-row>
@@ -43,6 +47,7 @@
             description: '',
             categories: [],
             blocks: [],
+            products: [],
             loaded: false,
         }),
         methods: {
@@ -75,7 +80,6 @@
             loadCategories(props) {
                 axios.post(getURL(`category/${this.$route.params.category_id}`),
                     {
-                        offset: 0,
                     }, {withCredentials: true})
                     .then(async response => {
                         const category_info = response.data;
@@ -93,6 +97,7 @@
                             const blockInfo = await this.loadBlock(blockId);
                             this.blocks.push(blockInfo.data)
                         }
+                        this.products = category_info.products_info;
                         this.loaded = true;
                     });
             },
