@@ -1,27 +1,24 @@
 <template>
-    <v-card class="rounded-5"
+    <v-card class="rounded-xl"
             color="white">
         <div class="px-4 py-4">
             <template v-if="Object.keys(presets || {}).length">
                 <v-row v-for="(values, name) of presets" :key="`preset-${name}`"
                        class="d-flex flex-column align-center justify-center px-2"
                 >
-                    <div v-if="name">
-                        <v-card-subtitle>
-                            <strong>
-                                {{name}}
-                            </strong>
-                        </v-card-subtitle>
-                        <v-spacer/>
-                    </div>
+                    <v-card-subtitle v-if="name" class="by-0">
+                        <strong>
+                            {{name}}
+                        </strong>
+                    </v-card-subtitle>
                     <div class="d-flex flex-row align-center justify-center"  v-if="expands" style="width: 100%" >
                         <v-slide-group id="slide-group" show-arrows>
                             <v-slide-item v-for="preset of values"
                                           :key="preset">
                                 <v-btn
-                                        class="elevation-0 rounded-5 mx-2 my-1 text-capitalize"
+                                        class="elevation-0 rounded-5 mx-2 text-capitalize"
                                         style="border: 1px solid blue; font-size: 0.8rem"
-                                        :style="{'background-color': (isItemSelected( preset ) || hover) ? 'blue' : 'white', 'color': (isItemSelected( preset ) || hover) ? 'white': 'blue'}"
+                                        :style="{'background-color': isItemSelected( preset ) ? 'blue' : 'white', 'color': isItemSelected( preset ) ? 'white': 'blue'}"
                                         v-on:click="changeItem(name, preset)"
                                 >
                                     {{preset}}
@@ -52,6 +49,7 @@
             </template>
             <v-card-actions class="overflow-auto overflow-y-hidden pb-0">
                 <v-select
+                        class="rounded-xl"
                         label="Сортировка:"
                         style="width: 250px; min-width: 150px; font-size: 12px; font-weight: bold"
                         dense

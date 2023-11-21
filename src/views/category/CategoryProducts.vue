@@ -33,7 +33,6 @@
                                 id="product-grid"
                                 v-if="presetsFilters.displayPages === 'grid'"
                                 v-bind="{
-                                        onProductView: onProductView,
                                         products: productsGroup,
                                         gridCols,
                                         cardWidth,
@@ -46,7 +45,6 @@
                                 id="product-list"
                                 v-if="presetsFilters.displayPages === 'list'"
                                 v-bind="{
-                                        onProductView: onProductView,
                                         products: productsGroup,
                                         favouriteIds,
                                         compareIds
@@ -67,16 +65,6 @@
                         </div>
                     </template>
                 </div>
-
-                <v-overlay v-on:click="dialogInfo.show = false"
-                           v-model="dialogInfo.show"
-                >
-
-                </v-overlay>
-                <ProductView
-                        v-if="dialogInfo.show"
-                        class="view-adaptive"
-                        v-bind="{dialogInfo}"/>
             </v-col>
         </v-row>
         </template>
@@ -87,7 +75,6 @@
 <script>
     import Filter from "../../components/products/ProductFilter";
     import ProductsGrid from "../../components/products/Grid";
-    import ProductView from "../../components/products/View";
     import {getURL} from "../../utils/settings";
     import axios from 'axios';
     import eventBus from "../../utils/eventBus";
@@ -103,10 +90,6 @@
             breadCrumbs: [],
             filters: {},
             hasFilters: false,
-            dialogInfo: {
-                show: false,
-                id: 0
-            },
             productsGroups: [],
             page: 0,
             favouriteIds: [],
@@ -165,10 +148,6 @@
             },
             async loadBlock(id) {
                 return await axios.get(getURL(`block/${id}`));
-            },
-            onProductView(id) {
-                this.dialogInfo.id = id;
-                this.dialogInfo.show = true;
             },
             updateProduct(placeholder, id) {
                 axios.post(getURL('product/update'), {placeholder, id}, {withCredentials: true}).then(() => {
@@ -305,9 +284,7 @@
                     }
                 }
             },
-            onProductViewClosed() {
-                this.dialogInfo.show = false;
-            },
+
             onDisplayFormatChanged(presetsFilter) {
                 this.presetsFilters = presetsFilter;
                 console.log('presetsFilters: ', this.presetsFilters)
@@ -327,18 +304,18 @@
             }
         },
         beforeDestroy() {
-            eventBus.$off('product-view-closed', this.onProductViewClosed);
             eventBus.$off('presets/format-changed', this.onDisplayFormatChanged);
             eventBus.$off('product-updated', this.onProductUpdated);
             eventBus.$off('product-meta-updated', this.onProductMetaUpdated);
             eventBus.$off('filter-applied', this.onFilterApplied);
+
+
+
         },
         beforeMount() {
             this.calculateGridCols();
 
             window.addEventListener('resize', this.calculateGridCols);
-
-            eventBus.$on('product-view-closed', this.onProductViewClosed);
             eventBus.$on('presets/format-changed', this.onDisplayFormatChanged);
             eventBus.$on('product-updated', this.onProductUpdated);
             eventBus.$on('product-meta-updated', this.onProductMetaUpdated);
@@ -354,7 +331,7 @@
             ProductsList,
             ProductPresets,
             BlockInfo,
-            ProductView, ProductsGrid, ProductFilter: Filter, InfiniteLoading}
+            ProductsGrid, ProductFilter: Filter, InfiniteLoading}
     }
 </script>
 
@@ -363,14 +340,5 @@
         width: 70vw;
         margin: 0 auto;
     }
-    .view-adaptive {
-        width: 70vw;
-        overflow-y: hidden;
-        overflow-x: hidden;
-        position: fixed;
-        left: 15%;
-        top: 10%;
-        bottom: 10%;
-        z-index: 10;
-    }
+
 </style>

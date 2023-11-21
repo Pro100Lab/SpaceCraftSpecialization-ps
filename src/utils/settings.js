@@ -1,10 +1,16 @@
 
 export const is_debug = process.env.NODE_ENV === 'development';
 export const debug_endpoint = 'localhost:8000';
-export const endpoint = 'gorenerga.ru';
+
+export const spacecraft = 'spacecraft-it.ru';
+export const flagman = 'flagman-climate.ru';
+export const gorenerga = 'gorenerga.ru';
+export const galaxyHotels = 'galaxy-hotels.ru'
 export const schema = 'https';
 export const debug_schema = 'http';
 export const endpoint_version = 'v1';
+
+const endpoint = spacecraft;
 
 export function getURL(urn) {
     return `${is_debug ? debug_schema : schema}://${is_debug ? debug_endpoint : endpoint}/${is_debug ? '' : 'api/'}${urn}`

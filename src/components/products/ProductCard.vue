@@ -10,27 +10,27 @@
                         height="150px"
                         class="mx-2 my-2 mx-auto"
                         :class="hover? 'scaled' : 'unscaled'"
-                        :src="images && images.length > 0 ? getStatic(images[0]) : getStatic(noPhoto)"
+                        :src="info.images && info.images.length > 0 ? getStatic(info.images[0]) : getStatic(noPhoto)"
                         alt=""
                         :style="isMobile ? {} : {cursor: 'zoom-in'}"
-                        v-on:click="isMobile ? actions.goToProduct(id) : actions.onProductView(id, title, description)"
+                        v-on:click="isMobile ? actions.goToProduct(index) : onProductView()"
                 >
                 </v-img>
                     <v-card-title
                             style="font-size: 15px; line-height: 19px; cursor: pointer"
                             class="text-left text-wrap text-break"
-                            v-on:click="actions.goToProduct(id)"
+                            v-on:click="actions.goToProduct(index)"
                     >
-                        {{title}}
+                        {{info.title}}
                     </v-card-title>
                 <v-divider></v-divider>
                 <v-card-actions class="mx-2 my-0 py-0">
-                    <h4 style="font-size: 0.8rem; color: rgba(165,0,0,0.5)" v-if="!available">• Нет в наличии</h4>
-                    <h4 style="font-size: 0.8rem; color: rgba(0,165,0,0.5)" v-else-if="available === 'В наличии'">• {{available}}</h4>
-                    <h4 style="font-size: 0.8rem; color: rgba(165,105,0,0.5)" v-else>• {{available}}</h4>
+                    <h4 style="font-size: 0.8rem; color: rgba(165,0,0,0.5)" v-if="!info.available">• Нет в наличии</h4>
+                    <h4 style="font-size: 0.8rem; color: rgba(0,165,0,0.5)" v-else-if="info.available === 'В наличии'">• {{info.available}}</h4>
+                    <h4 style="font-size: 0.8rem; color: rgba(165,105,0,0.5)" v-else>• {{info.available}}</h4>
                 </v-card-actions>
                 <v-card-actions class="mx-2">
-                    <span v-if="price"><strong>{{normalizePrice(price)}} Руб.</strong></span>
+                    <span v-if="info.price"><strong>{{normalizePrice(info.price)}} Руб.</strong></span>
                     <span v-else>Цена договорная</span>
                     <v-spacer/>
                     <v-tooltip top>
@@ -39,7 +39,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :color="favourite ? 'red': 'gray'"
-                                    v-on:click="processClick('favourite', id)"
+                                    v-on:click="processClick('favourite')"
                             >mdi-heart</v-icon>
                         </template>
                         <span>
@@ -52,7 +52,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :color="compare ? 'orange': 'gray'"
-                                    v-on:click="processClick('compare', id)"
+                                    v-on:click="processClick('compare')"
                             >mdi-abacus</v-icon>
                         </template>
                         <span>
@@ -60,16 +60,16 @@
                         </span>
                     </v-tooltip>
                 </v-card-actions>
-                <v-card-subtitle v-if="specialPrice">
-                    <br/><p style="color: purple" class="ma-0"><strong>{{specialPrice}} Руб.</strong></p>
-                    <br/><p style="color: purple" class="ma-0"><strong>Выгода: {{sale}} Руб. ({{salePercent}}%)</strong></p>
+                <v-card-subtitle v-if="info.specialPrice">
+                    <br/><p style="color: purple" class="ma-0"><strong>{{info.specialPrice}} Руб.</strong></p>
+                    <br/><p style="color: purple" class="ma-0"><strong>Выгода: {{info.sale}} Руб. ({{info.salePercent}}%)</strong></p>
                 </v-card-subtitle>
                 <v-btn
-                        v-if="price"
+                        v-if="info.price"
                         dark
                         class="rounded-t-0 text-break"
                         :color="common.color"
-                        v-on:click="processClick('cart', id)"
+                        v-on:click="processClick('cart')"
                 >В корзину</v-btn>
             </v-card>
         </v-hover>
@@ -80,16 +80,17 @@
     import {getStatic, getURL, normalizePrice} from "../../utils/settings";
     import eventBus from "../../utils/eventBus";
     import loader from "../../utils/customizeOptions";
+    import axios from 'axios';
 
     export default {
-        name: "Card",
-        props: ['id', 'title', 'description', 'images', 'price', 'specialPrice', 'sale', 'salePercent',
-            'actions', 'favourite', 'compare', 'width', 'available'],
+        name: "ProductCard",
+        props: ['index', 'product', 'actions', 'favourite', 'compare', 'width'],
         data: () => {
             return {
                 eventBus,
                 noPhoto: null,
-                common: {color: 'primary'}
+                common: {color: 'primary'},
+                info: {},
             }
         },
         computed: {
@@ -101,11 +102,30 @@
             await loader().loadOptions();
             this.noPhoto = loader().getOption(['Common', 'NoPhoto']);
             this.common.color = loader().getOption(['Common', 'Schema', 'Colors', 'Primary']);
+
+            console.log('this.product: ', this.product);
+
+            if(this.product) {
+                this.info = this.product;
+            }
+
+            if(!this.product) {
+                if(this.index)
+                    this.loadProduct();
+            }
         },
         methods: {
             normalizePrice, getURL, getStatic,
-            processClick(type, id) {
-                eventBus.$emit('product-meta-updated', id, type);
+            processClick(type) {
+                eventBus.$emit('product-meta-updated', this.index, type);
+            },
+            onProductView() {
+                eventBus.$emit('product-view-open', this.index);
+            },
+            loadProduct() {
+                axios.get(getURL(`product/${this.index}`)).then(response => {
+                    this.info = response.data.product_info;
+                })
             }
         }
     }

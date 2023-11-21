@@ -3,27 +3,30 @@
 </template>
 
 <script>
-    import CategoryGrid from "../category/CategoryGrid";
+    import CategoryGrid from "../../category/CategoryGrid";
     import axios from "axios";
-    import {getURL} from "../../utils/settings";
+    import {getURL} from "../../../utils/settings";
     export default {
         name: "CategoryBlock",
         components: {CategoryGrid},
-        props: ['categoryId'],
+        props: {
+            content: {}
+        },
         data: () => {
             return {
                 categoryInfo: []
             }
         },
         mounted() {
-            if(this.categoryId) {
-                axios.post(getURL(`category/${this.categoryId}`),
+            console.log('category content: ', this.content);
+            const categoryId = this.content.Description;
+            if(categoryId) {
+                axios.post(getURL(`category/${categoryId}`),
                     {
                         offset: 0,
                     }, {withCredentials: true})
                     .then(async response => {
-                        const category_info = response.data;
-                        this.categoryInfo = category_info.categories;
+                        this.categoryInfo = response.data.categories;
                     });
             }
         }

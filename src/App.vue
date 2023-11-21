@@ -36,6 +36,8 @@
             <template v-if="showNavigationIcons">
                 <navigation-icons></navigation-icons>
             </template>
+
+            <product-view/>
             <!--<absolute components/>-->
         </div>
     </v-app>
@@ -53,10 +55,12 @@
     import StatusBar from "./components/StatusBar";
     import StackPanelController from "./components/stack-panels/StackPanelController";
     import {getUser} from "./utils/profile";
+    import ProductView from "./components/products/View";
 
     export default {
         name: 'App',
         components: {
+            ProductView,
             StackPanelController,
             StatusBar,
             NavigationIcons, ShortCuts, InfoPanel, SnackController, Footer, MinorAppBar, MainAppBar},

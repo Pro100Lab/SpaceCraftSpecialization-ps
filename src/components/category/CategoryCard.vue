@@ -7,10 +7,10 @@
                 v-on:click="goToCategory(id)"
         >
             <v-img :src="getStatic(image)"
-                   class="v-image__image--cover"
+                   class="v-image__image--cover mx-auto"
                    :class="hover ? 'scaled' : 'unscaled'"
-                   height="150"
-                   contain
+                   height="75"
+                   width="100"
                     v-if="image"/>
             <v-card-title class="text-left text-wrap text-break category-card-adaptive"
                           v-if="title">
@@ -52,6 +52,7 @@
 
     .unscaled {
         transition: .2s; /* Время эффекта */
-        display: block; /* Убираем небольшой отступ снизу */
+        transform: scale(1) /* Увеличиваем масштаб */
+
     }
 </style>

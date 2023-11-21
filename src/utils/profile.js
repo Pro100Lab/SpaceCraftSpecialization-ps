@@ -8,7 +8,11 @@ class Profile {
     favourite = [];
 
     authorized = false;
-    user = {};
+    user = {
+        Profile: {
+
+        }
+    };
 
     constructor() {
         this.session = window.localStorage.getItem('token') || null;
@@ -23,7 +27,11 @@ class Profile {
     logOut() {
         window.localStorage.setItem('token', '');
         this.authorized = false;
-        this.user = {};
+        this.user = {
+            Profile: {
+
+            }
+        }
 
         eventBus.$emit('user/log-out');
     }

@@ -122,7 +122,7 @@
 
 <script>
     import axios from "axios";
-    import {getURL} from "../../utils/settings";
+    import {getURL} from "../../../utils/settings";
 
     export default {
         name: "BookingBlock",

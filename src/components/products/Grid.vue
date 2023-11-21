@@ -3,19 +3,12 @@
         <v-row v-for="row of this.productRows" :key="`row-${row.idx}`" class="d-flex flex-row">
             <v-col v-for="product of row.col" :key="`col-${product.id}`" class="d-flex flex-row"
                    :cols="row.col.length === gridCols ? 12/gridCols : 12/row.col.length">
-                <Card
+                <ProductCard
                         v-bind="{
-                     id: product.id,
-                     title: product.title,
-                     description: product.description,
-                     images: product.images,
+                     index: product.id,
+                     product: product,
                      width: cardWidth,
-                     price: product.price,
-                     specialPrice: product.specialPrice,
-                     sale: product.sale,
-                     salePercent: product.salePercent,
-                     available: product.available,
-                     actions: {onProductView, goToProduct},
+                     actions: {goToProduct},
                      favourite: favouriteIds.indexOf(product.id) !== -1,
                      compare: compareIds.indexOf(product.id) !== -1}"
                         :style="{'width': '100%'}"
@@ -29,16 +22,16 @@
 <script>
     import eventBus from "../../utils/eventBus";
     import {normalizePrice} from "../../utils/settings";
-    import Card from "./Card";
+    import ProductCard from "./ProductCard";
 
     export default {
         name: "ProductsGrid",
-        components: {Card},
+        components: {ProductCard},
         data: () => ({
             eventBus,
             productRows: [],
         }),
-        props: ['gridCols', 'cardWidth', 'windowWidth', 'onProductView','products', 'favouriteIds', 'compareIds'],
+        props: ['gridCols', 'cardWidth', 'windowWidth', 'products', 'favouriteIds', 'compareIds'],
         mounted() {
             if (this.products && this.products.length > 0) {
                 this.productRows = this.getProductRows();
