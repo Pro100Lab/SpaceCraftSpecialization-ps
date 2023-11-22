@@ -10,7 +10,7 @@ export const schema = 'https';
 export const debug_schema = 'http';
 export const endpoint_version = 'v1';
 
-const endpoint = spacecraft;
+const endpoint = gorenerga;
 
 export function getURL(urn) {
     return `${is_debug ? debug_schema : schema}://${is_debug ? debug_endpoint : endpoint}/${is_debug ? '' : 'api/'}${urn}`
