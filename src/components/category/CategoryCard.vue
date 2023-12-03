@@ -11,6 +11,7 @@
                    :class="hover ? 'scaled' : 'unscaled'"
                    height="75"
                    width="100"
+                   contain
                     v-if="image"/>
             <v-card-title class="text-left text-wrap text-break category-card-adaptive"
                           v-if="title">

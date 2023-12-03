@@ -1,9 +1,24 @@
-# Front-end сервиса для продажи кондиционеров
+# condition
 
-Текущее состояние: Доработка бэк - енда
-<h1>Контрольные точки</h1>
-<h2><s> - Верстка страницы с карточками товаров </s></h2>
-<h2><s> - Создание админки для работы с содержимым сайта </s></h2>
-<h2><s> - Ожидание бэк-енда сервиса </s></h2>
-<h2> - Доработка основных фич (Фильтры, хлебные крошки, основная страница, выдвижной панели) </h2>
-<h2> - Верстка мобильной версии </h2>
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
