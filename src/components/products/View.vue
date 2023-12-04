@@ -75,8 +75,11 @@
                                 <h4 style="font-size: 0.8rem; color: rgba(0,165,0,0.5)" v-else-if="available === 'В наличии'">• {{available}}</h4>
                                 <h4 style="font-size: 0.8rem; color: rgba(165,105,0,0.5)" v-else>• {{available}}</h4>
                             </v-card-actions>
-                            <v-card-title v-if="price">
+                            <v-card-title class="mt-2" v-if="!productChat && price">
                                 <span><strong>{{price}} Руб.</strong></span>
+                            </v-card-title>
+                            <v-card-title v-else>
+                                <span><strong>Цена договорная</strong></span>
                             </v-card-title>
                             <v-card-subtitle v-if="specialPrice">
                                 <br/><p style="color: purple" class="ma-0"><strong>{{specialPrice}} Руб.</strong></p>
@@ -125,6 +128,7 @@
                 salePercent: 0,
                 specialPrice: 0,
                 noPhoto: null,
+                productChat: false,
                 dialogInfo: {
                     show: false,
                     index: null
@@ -170,6 +174,7 @@
                         this.compare = product_info.compare;
                         this.art = product_info.art;
                         this.available = product_info.available;
+                        this.productChat = product_info.product_chat
                         if(product_info.specialPrice) {
                             console.log('calculate prices')
                             this.specialPrice = product_info.specialPrice;
