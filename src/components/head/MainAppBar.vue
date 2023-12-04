@@ -319,8 +319,8 @@
     }
 
     .app-bar__adaptive-title {
-        font-size: calc(var(--index) * 1) !important;
-        line-height: calc(var(--index) * 1) !important;
+        font-size: calc(var(--index) * 0.95) !important;
+        line-height: calc(var(--index) * 0.98) !important;
         font-weight: bold;
         cursor: default;
     }
