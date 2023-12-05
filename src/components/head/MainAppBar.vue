@@ -16,13 +16,13 @@
                         </v-col>
                         <!--</logo>-->
                         <v-col cols="7" class="pa-0">
-                            <v-card-title class="app-bar__adaptive-title"
+                            <v-card-title class="app-bar__adaptive-title pr-0"
                                           :style="{color: logo.textColor}"
                                           v-html="logo.title"
                                           v-if="logo.title">
                             </v-card-title>
                             <v-card-subtitle
-                                    class="app-bar__adaptive-subtitle"
+                                    class="app-bar__adaptive-subtitle pr-0"
                                     :style="{color: logo.textColor}"
                                     v-html="logo.subtitle"
                                     v-if="logo.subtitle"
