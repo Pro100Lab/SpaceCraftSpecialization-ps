@@ -10,7 +10,7 @@
                 :dragging-distance="70"
                 prevent-y-scroll
                 :slide-ratio="1 / 3"
-                fixed-height="10vh"
+                :fixed-height="height"
         >
             <vueper-slide v-for="(image, index) of images"
                           :key="`image-${index}-${image}`"
