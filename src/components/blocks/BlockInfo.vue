@@ -4,7 +4,7 @@
             :class="cssClass"
             :style="cssProps || {width: settings.block.width,
                                  background: settings.block.background}">
-        <template v-if="title">
+        <template v-if="title && title!=='<p></p>'">
             <v-card-title style="font-weight: normal"
                           class="text-break text-center pb-4"
                           v-html="title.replace('\n', '&lt;br/&gt;')"/>

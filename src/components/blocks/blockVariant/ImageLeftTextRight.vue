@@ -1,9 +1,10 @@
 <template>
-    <div class="d-flex flex-row justify-space-around">
+    <div class="d-flex flex-row justify-center align-center" style="height: 100%">
         <v-img
                 class="rounded-xxl"
-                style="max-width: 50vw;"
-                contain :src="getStatic(images[0])"
+                contain
+                style="max-height: 100%"
+                :src="getStatic(images[0])"
         >
         </v-img>
         <v-card-text

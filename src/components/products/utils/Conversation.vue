@@ -83,7 +83,7 @@
 
 <script>
     import axios from 'axios';
-    import {getURL} from "../../../utils/settings";
+    import {getURL, getWSSUrl} from "../../../utils/settings";
     import MiniProfile from "./MiniProfile";
     import eventBus from "../../../utils/eventBus";
 
@@ -99,11 +99,13 @@
                 participants: [],
                 employees: [],
                 shouldUpdate: false,
+                websocket: null
             }
         },
         mounted() {
             this.loadConversation();
             this.loadEmployees();
+            this.makeSocket();
         },
         updated() {
             if(this.conversation.length > 0 && this.shouldUpdate)
@@ -119,7 +121,39 @@
                 }
             }
         },
+        beforeDestroy() {
+            if(this.websocket) {
+                this.websocket.close();
+                this.websocket = null;
+            }
+        },
         methods: {
+            makeSocket() {
+              this.websocket = new WebSocket(getWSSUrl('ws'));
+              this.websocket.onopen = (e) => {
+                  console.log('socket opened ', e);
+              };
+
+              this.websocket.onclose  = (e) => {
+                  console.log('socket closed ', e);
+              };
+
+              this.websocket.onerror = (e) => {
+                  console.log('socket on error', e)
+              }
+
+              this.websocket.onmessage = (e) => {
+                  const ws_message = e.data;
+                  let msg_tokens = ws_message.split(':');
+                  if(msg_tokens
+                      && msg_tokens.length === 2
+                      && msg_tokens[0] === 'chat-updated'
+                      && msg_tokens[1] === String(this.idx) ) {
+                      this.loadConversation();
+                  }
+                  console.log('socket on message ', e.data)
+              }
+            },
             loadEmployees() {
                 axios.get(getURL('admin/user_list')).then(res => {
                     this.employees = res.data;
@@ -127,7 +161,7 @@
             },
             loadConversation() {
                 if(this.idx)
-                    axios.get(getURL(`docflow/conversation/${this.idx}`)).then(res => {
+                    axios.get(getURL(`docflow/conversation/${this.idx}`), {withCredentials: true}).then(res => {
                         if(res.data.Messages && this.conversation.length !== res.data.Messages)
                             this.shouldUpdate = true;
                         this.conversation = res.data.Messages || [];

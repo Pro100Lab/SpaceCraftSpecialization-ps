@@ -224,8 +224,9 @@
                 </v-card-text>
             </template>
             <transition name="slide-fade" v-else-if="selectedTab === tabs.indexOf('Характеристики')">
-                <v-list style="width: 50%" width="500">
-                    <v-list-item v-for="[key, value] of Object.entries(properties)" :key="`product-prop-${key}`" dense>
+                <v-list class="mx-auto">
+                    <template v-for="[key, value] of Object.entries(properties)">
+                    <v-list-item  :key="`product-prop-${key}`" v-if="key.indexOf('Цена')  === -1" dense>
                         <v-row>
                             <v-col cols="8">
                                 {{key}}
@@ -235,6 +236,7 @@
                             </v-col>
                         </v-row>
                     </v-list-item>
+                    </template>
                 </v-list>
             </transition>
             <template v-else-if="selectedTab === tabs.indexOf('Отзывы')"></template>

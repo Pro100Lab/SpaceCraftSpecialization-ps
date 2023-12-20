@@ -3,17 +3,16 @@
         <v-card
                 :elevation="hover ? 6 : 0"
                 width="240"
-                class="d-flex flex-column fill-height py-2 transparent"
+                class="d-flex flex-column fill-height transparent"
                 v-on:click="goToCategory(id)"
         >
             <v-img :src="getStatic(image)"
-                   class="v-image__image--cover mx-auto"
+                   class="v-image__image--cover my-2"
                    :class="hover ? 'scaled' : 'unscaled'"
                    height="75"
-                   width="100"
                    contain
                     v-if="image"/>
-            <v-card-title class="text-left text-wrap text-break category-card-adaptive"
+            <v-card-title class="text-left text-wrap text-break category-card-adaptive my-0"
                           v-if="title">
                 {{title}}
             </v-card-title>
