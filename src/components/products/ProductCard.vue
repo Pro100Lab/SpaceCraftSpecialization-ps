@@ -103,8 +103,6 @@
             this.noPhoto = loader().getOption(['Common', 'NoPhoto']);
             this.common.color = loader().getOption(['Common', 'Schema', 'Colors', 'Primary']);
 
-            console.log('this.product: ', this.product);
-
             if(this.product) {
                 this.info = this.product;
             }

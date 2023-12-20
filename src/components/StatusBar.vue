@@ -10,7 +10,7 @@
                 <v-card-title v-if="siteLogo.Title">{{siteLogo.Title}}</v-card-title>
                 </div>
             </template>
-            <search-bar v-if="settings.Search"/>
+            <search-bar class="px-3" v-if="settings.Search"/>
             <v-icon v-if="settings.Chat" color="white" v-on:click="showChatStackPanel">mdi-chat-processing-outline</v-icon>
         </v-card-actions>
     </v-sheet>

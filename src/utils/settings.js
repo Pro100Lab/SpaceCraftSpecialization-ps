@@ -9,7 +9,7 @@ export const galaxyHotels = 'galaxy-hotels.ru'
 export const schema = 'https';
 export const debug_schema = 'http';
 export const endpoint_version = 'v1';
-export const wss_schema = 'wss';
+export const wss_schema = 'ws';
 export const ws_schema = 'ws';
 
 const endpoint = gorenerga;
