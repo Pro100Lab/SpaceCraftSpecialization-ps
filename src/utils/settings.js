@@ -9,7 +9,7 @@ export const galaxyHotels = 'galaxy-hotels.ru'
 export const schema = 'https';
 export const debug_schema = 'http';
 export const endpoint_version = 'v1';
-export const wss_schema = 'ws';
+export const wss_schema = 'wss';
 export const ws_schema = 'ws';
 
 const endpoint = gorenerga;
@@ -19,7 +19,7 @@ export function getURL(urn) {
 }
 
 export function getWSSUrl(urn) {
-    return `${is_debug ? ws_schema : wss_schema }://${is_debug ? debug_endpoint : endpoint}/${is_debug ? '' : 'api/'}${urn}`
+    return `${is_debug ? ws_schema : wss_schema }://${is_debug ? debug_endpoint : endpoint}/${is_debug ? '' : 'ws/'}${urn}`
 }
 
 export function getStatic(src) {
