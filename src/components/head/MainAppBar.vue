@@ -45,8 +45,8 @@
                                 <span class="app-bar__adaptive-features-long overflow-x-hidden">ул. Заводская, 27, офис 201</span>
                             </div>
                         </v-col>
-                        <v-col class="app-bar__adaptive-phone d-flex flex-column align-center justify-end" cols="5">+7
-                            (912) 291-16-65
+                        <v-col class="app-bar__adaptive-phone d-flex flex-column align-center justify-end" cols="5">+7 (922) 184-88-23
+
                         </v-col>
                     </v-row>
                     <v-row class="d-flex flex-row">
