@@ -42,7 +42,7 @@
                             <div class="d-flex flex-row">
                                 <v-icon size="16" class="app-bar__adaptive-features mx-1">mdi-map-marker-outline
                                 </v-icon>
-                                <span class="app-bar__adaptive-features-long overflow-x-hidden">Екатеринбург, ул. Анатолия Муранова, 18, 6.2</span>
+                                <span class="app-bar__adaptive-features-long overflow-x-hidden">ул. Заводская, 27, офис 201</span>
                             </div>
                         </v-col>
                         <v-col class="app-bar__adaptive-phone d-flex flex-column align-center justify-end" cols="5">+7
