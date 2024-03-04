@@ -119,7 +119,7 @@
         props: ['withoutFilter', 'crumbs', 'runTrigger'],
         watch: {
             filters() {
-                this.hasFilters = this.filters && Object(this.filters).keys().length > 0;
+                this.hasFilters = this.filters && Object.keys(this.filters).length > 0;
                 console.log('has filters: ', this.hasFilters)
             }
         },

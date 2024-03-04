@@ -213,10 +213,12 @@
                         let valuesWithCheckedFlag = [];
 
                         filterInfo.values.forEach(item => {
-                            if(!item.name)
-                                valuesWithCheckedFlag.push({name: item, checked: false});
-                            else
-                                valuesWithCheckedFlag.push(item);
+                            if(item) {
+                                if (!item.name)
+                                    valuesWithCheckedFlag.push({name: item, checked: false});
+                                else
+                                    valuesWithCheckedFlag.push(item);
+                            }
                         });
 
                         radioFilter.values = valuesWithCheckedFlag;

@@ -126,18 +126,4 @@
 </script>
 
 <style scoped >
-    .bottom-bar__main-scope {
-        width: 70%;
-        margin: 0 auto;
-    }
-    @media screen and (max-width: 1280px){
-        .bottom-bar__main-scope {
-            width: 85%;
-        }
-    }
-    @media screen and (max-width: 960px){
-        .bottom-bar__main-scope {
-            width: 95%;
-        }
-    }
 </style>
