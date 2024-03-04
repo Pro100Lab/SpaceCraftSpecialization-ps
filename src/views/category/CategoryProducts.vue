@@ -8,6 +8,7 @@
                 />
             </v-col>
         </v-row>
+        <v-scroll-y-transition>
         <v-row v-if="blocks && blocks.length > 0">
             <v-col class="fill-height">
                 <BlockInfo
@@ -16,6 +17,7 @@
                         :info="info"/>
             </v-col>
         </v-row>
+        </v-scroll-y-transition>
         <template v-if="productsGroups && productsGroups.length > 0">
         <v-row v-if="hasFilters" class="d-flex flex-row align-start justify-start" >
             <v-col v-if="window.innerWidth > 1280 && productsGroups.length > 0" cols="3">
