@@ -1,6 +1,6 @@
 <template>
     <v-sheet v-if="categories.length > 0" class="d-flex flex-row">
-        <v-row style="max-width: 100vw" justify="start" class="d-flex flex-row float-left">
+        <v-row style="max-width: 100vw" justify="start">
             <v-col v-for="category of categories" :key="`col-${category.id}`"
                    :cols="12 / innerGridCols"
                    >
@@ -26,7 +26,7 @@
         data: () => {
             return {
                 categoriesRows: [],
-                innerGridCols: 4,
+                innerGridCols: 3,
                 cardWidth: 350,
                 windowWidth: 1281
             }
