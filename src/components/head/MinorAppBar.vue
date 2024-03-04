@@ -13,7 +13,7 @@
                                 v-on="on"
                                 :to="`/category/${root.id}`"
                         >
-                        <span class="minor-bar__adaptive-font">{{root.title}}</span>
+                        <span class="minor-bar__adaptive-font"  :style="text">{{root.title}}</span>
                             <v-icon v-if="root.children && root.children.length > 0">
                                 mdi-chevron-down
                             </v-icon>
