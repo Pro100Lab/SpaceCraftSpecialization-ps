@@ -1,9 +1,9 @@
 <template>
-    <v-row>
-        <v-col :cols="isMobile ? 12 : 3"  v-for="product of products"  :key="`block-${1}-product-${product}`">
+    <div class="d-flex flex-row overflow-x-auto py-3">
+        <v-col class="mx-1" :cols="isMobile ? 8 : 3"  v-for="product of products"  :key="`block-${1}-product-${product}`">
         <ProductCard :index="product"></ProductCard>
         </v-col>
-    </v-row>
+    </div>
 </template>
 
 <script>
