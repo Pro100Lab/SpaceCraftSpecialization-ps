@@ -1,0 +1,19 @@
+body {
+
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100%;
+    overscroll-behavior-y: contain;
+    /* prevent overscroll bounce*/
+    -webkit-overflow-scrolling: touch;
+    /* iOS velocity scrolling */
+}
+@media screen and (max-width: 960px) {
+    html {
+        overscroll-behavior-y: contain;
+        width: 100%;
+
+    }
+}

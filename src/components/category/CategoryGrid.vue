@@ -1,8 +1,8 @@
 <template>
-    <div v-if="categories.length > 0" class="d-flex flex-column align-center justify-space-around pa-4">
-        <v-row v-for="row of this.categoriesRows" :key="`row-${row.idx}`" style="max-width: 100vw" class="d-flex flex-row float-left">
-            <v-col v-for="category of row.col" :key="`col-${category.id}`"
-                   :cols="row.col.length === innerGridCols ? Math.floor(12/innerGridCols) : Math.floor(12/row.col.length)"
+    <v-sheet v-if="categories.length > 0">
+        <v-row style="max-width: 100vw" justify="start" class="d-flex flex-row float-left">
+            <v-col v-for="category of categories" :key="`col-${category.id}`"
+                   :cols="innerGridCols"
                    >
                 <CategoryCard v-bind="{
                     id: category.id,
@@ -14,7 +14,7 @@
                 />
             </v-col>
         </v-row>
-    </div>
+    </v-sheet>
 </template>
 
 <script>
@@ -91,16 +91,12 @@
                 return false;
             },
             getCategoriesRows: function () {
-                let offset = 0;
                 let categoryCol = [];
                 let categoryRows = [];
-                this.categories.forEach((value, index) => {
+                this.categories.forEach((value) => {
                     categoryCol.push(value);
-                    if(categoryCol.length === this.innerGridCols || index === this.categories.length - 1) {
-                        categoryRows.push({idx: offset++, col: categoryCol});
-                        categoryCol = [];
-                    }
                 })
+                categoryRows.push(categoryCol)
                 return categoryRows;
             },
         }

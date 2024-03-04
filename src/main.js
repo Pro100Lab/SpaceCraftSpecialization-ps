@@ -8,6 +8,7 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import YmapPlugin from 'vue-yandex-maps'
 import {jasettings} from "./utils/settings";
+import './assets/main.css'
 
 gsap.registerPlugin(ScrollTrigger);
 Vue.config.productionTip = false

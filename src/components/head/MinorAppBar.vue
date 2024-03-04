@@ -14,7 +14,7 @@
                                 :to="`/category/${root.id}`"
                         >
                         <span class="minor-bar__adaptive-font"  :style="text">{{root.title}}</span>
-                            <v-icon v-if="root.children && root.children.length > 0">
+                            <v-icon v-if="root.children && root.children.length > 0"  :style="text">
                                 mdi-chevron-down
                             </v-icon>
                         </v-btn>
@@ -27,7 +27,7 @@
                                 :to="`/category/${child.id}`"
                         >
                             <v-list-item-title  >
-                                <span class="minor-bar__adaptive-font" :style="text">{{ child.title }}</span></v-list-item-title>
+                                <span class="minor-bar__adaptive-font">{{ child.title }}</span></v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
@@ -62,7 +62,8 @@
             await loader().loadOptions();
 
             this.background = loader().getOption(['Header', 'MinorBar', 'Background']);
-            this.text = loader().getOption(['Header', 'MinorBar', 'Text']);
+            this.text = loader().getAsObject(['Header', 'MinorBar', 'Text']);
+            console.log('text options: ', this.text);
             this.schema = loader().getOption(['Common', 'Schema']);
         }
     }

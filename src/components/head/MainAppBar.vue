@@ -5,7 +5,7 @@
                 <!--<logo>-->
                 <v-col cols="3">
                     <v-row class="ma-0" align="center">
-                        <v-col cols="4" class="pa-0">
+                        <v-col class="pa-0">
                             <v-img :src="logo.image"
                                    v-if="logo.image"
                                    alt="SpaceCraftImage"
@@ -15,7 +15,7 @@
                             />
                         </v-col>
                         <!--</logo>-->
-                        <v-col cols="7" class="pa-0">
+                        <v-col class="pa-0">
                             <v-card-title class="app-bar__adaptive-title pr-0"
                                           :style="{color: logo.textColor}"
                                           v-html="logo.title"
