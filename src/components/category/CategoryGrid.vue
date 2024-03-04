@@ -66,7 +66,7 @@
                 console.log('window with: ', windowWidth);
                 if( windowWidth > 1280 ) {
                     this.windowWidth = 0.7 * windowWidth + 24;
-                    this.cardWidth = this.windowWidth * 0.235;
+                    this.cardWidth = this.windowWidth * 0.33;
                 }
                 if( windowWidth <= 1280 ) {
                     this.windowWidth = 0.8 * windowWidth;

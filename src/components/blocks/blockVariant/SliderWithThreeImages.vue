@@ -40,7 +40,6 @@
         methods: {
             getStatic,
             linkTo(text) {
-                console.log('link to: ', text);
                 text;
             }
         },

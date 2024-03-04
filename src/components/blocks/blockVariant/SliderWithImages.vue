@@ -52,6 +52,9 @@
         mounted() {
             console.log('slider with images content: ', this.content);
             this.images = this.content.Content || [];
+            if(typeof this.images === 'object') {
+                this.images = Object.keys(this.images);
+            }
             this.height = this.content.CSSProps && this.content.CSSProps.height ? this.content.CSSProps.height : 400;
         }
     }
