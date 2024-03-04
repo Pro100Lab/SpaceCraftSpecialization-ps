@@ -12,7 +12,7 @@
                    height="75"
                    contain
                     v-if="image"/>
-            <v-card-title class="text-left text-wrap text-break category-card-adaptive my-0"
+            <v-card-title class="text-left text-wrap text-break category-card-adaptive my-0 text-break"
                           v-if="title">
                 {{title}}
             </v-card-title>
@@ -37,7 +37,8 @@
 
 <style>
     .category-card-adaptive{
-
+        font-size: calc(var(--index) * 0.9);
+        line-height: calc(var(--index) * 1);
     }
 
     .scale {

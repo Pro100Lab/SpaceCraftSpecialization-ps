@@ -1,7 +1,9 @@
 <template>
-    <v-card-actions class="d-flex flex-row">
-        <ProductCard class="mx-4" v-for="product of products" :key="`block-${1}-product-${product}`" :index="product"></ProductCard>
-    </v-card-actions>
+    <div class="d-flex flex-row overflow-x-auto py-3">
+        <v-col class="pa-0" :cols="isMobile ? 6 : 3"  v-for="product of products"  :key="`block-${1}-product-${product}`">
+        <ProductCard :index="product"></ProductCard>
+        </v-col>
+    </div>
 </template>
 
 <script>
@@ -20,6 +22,11 @@
         },
         methods: {
             getStatic
+        },
+        computed: {
+            isMobile: function() {
+                return window.innerWidth < 960;
+            }
         },
         mounted() {
             this.products = this.content.Description.split(',');

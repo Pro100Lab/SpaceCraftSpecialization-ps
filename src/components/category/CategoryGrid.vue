@@ -1,6 +1,6 @@
 <template>
-    <div v-if="categories.length > 0" class="d-flex flex-column justify-space-around pa-1">
-        <v-row v-for="row of this.categoriesRows" :key="`row-${row.idx}`" class="d-flex flex-row float-left px-4">
+    <div v-if="categories.length > 0" class="d-flex flex-column align-center justify-space-around pa-4">
+        <v-row v-for="row of this.categoriesRows" :key="`row-${row.idx}`" style="max-width: 100vw" class="d-flex flex-row float-left">
             <v-col v-for="category of row.col" :key="`col-${category.id}`"
                    :cols="row.col.length === innerGridCols ? Math.floor(12/innerGridCols) : Math.floor(12/row.col.length)"
                    >
@@ -73,8 +73,8 @@
                     this.cardWidth = this.windowWidth * 0.24;
                 }
                 if( windowWidth <= 960 ) {
-                    this.windowWidth = 0.95 * windowWidth;
-                    this.cardWidth = 0.95 * windowWidth
+                    this.windowWidth = windowWidth;
+                    this.cardWidth = this.windowWidth * 0.45;
                 }
 
                 let shouldBeCols = Math.floor(this.windowWidth/this.cardWidth);

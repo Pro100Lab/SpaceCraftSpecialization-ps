@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-row justify-center align-center" style="height: 100%">
+    <div :class="content.isMobile ? 'd-flex flex-column align-center py-1' : 'd-flex flex-row align-center justify-space-around py-1'" style="height: 100%">
         <v-img
                 class="rounded-xxl"
                 contain
@@ -9,7 +9,7 @@
         </v-img>
         <v-card-text
                 style="font-size: 1rem"
-                class="text-break text-left"
+                :class="content.isMobile ? 'text-center' : 'text-left' + ' text-break'"
                 v-if="description"
                 v-html="description.replaceAll('\n', '&lt;br/&gt;')"
         />

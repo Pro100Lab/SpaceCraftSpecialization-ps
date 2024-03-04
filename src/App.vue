@@ -92,8 +92,8 @@
                 this.cssBodyProps = loader().getAsObject(['Body', 'CSSProps'], isMobile);
                 this.cssAppProps = loader().getAsObject(['App', 'CSSProps'], isMobile);
 
-                // this.cssAppProps.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${require('@/assets/background.png')})`
-                // this.cssAppProps.backgroundAttachment = 'fixed';
+                this.cssAppProps.background = `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${require('@/assets/flagman-background.png')})`
+                this.cssAppProps.backgroundAttachment = 'fixed';
                 this.showStatusBar = loader().getBool(['StatusBar'], isMobile);
                 this.showHeader = loader().getBool(['Header'], isMobile);
                 this.showFooter = loader().getBool(['Footer'], isMobile);

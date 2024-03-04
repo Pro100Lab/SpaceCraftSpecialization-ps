@@ -124,8 +124,9 @@
                 this.blockType = info['Type'];
                 this.title = info['Title'];
                 this.description = info['Description'];
-                this.cssProps = info['CSSProps'];
+                this.cssProps = this.isMobile ? null : info['CSSProps'];
                 this.cssClass = info['CSSClass'] || this.cssClass;
+
             },
         },
         async mounted() {
@@ -138,7 +139,6 @@
             this.cssClass = this.cssClass || getLoader().getOption(['Common', 'Block', 'Class']);
             console.log('settings: ', this.settings);
 
-
             if(this.info) {
                 this.blockInfo = this.info;
                 this.putInfo(this.blockInfo);
@@ -147,6 +147,7 @@
             if(!this.info && this.idx) {
                 this.loadBlock(this.idx);
             }
+            this.blockInfo.isMobile = this.isMobile;
 
         },
     }

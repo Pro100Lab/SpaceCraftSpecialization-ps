@@ -1,5 +1,5 @@
 <template>
-    <v-card >
+    <v-card class="fill-height">
         <v-hover v-slot="{ hover }">
             <v-card color="white"
                     :elevation="hover ? 6 : 0"

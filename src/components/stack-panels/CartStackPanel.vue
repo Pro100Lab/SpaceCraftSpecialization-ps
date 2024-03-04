@@ -88,7 +88,7 @@
             </div>
             <div key="ordering" id="order-user-info" ref="orderUserInfo" v-if="this.isOrdering">
                 <v-card-actions>
-                    <v-card-title>
+                    <v-card-title class="text-break">
                         Оформление заказа на сумму {{normalizePrice(totalPrice)}} Руб.
                     </v-card-title>
                     <v-spacer/>

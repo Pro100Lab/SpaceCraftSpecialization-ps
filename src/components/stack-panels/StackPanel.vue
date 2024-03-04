@@ -2,7 +2,7 @@
     <v-card
             color="white"
             ref="stackWrap"
-            class="fill-height main__stack-panel-right rounded-0"
+            class="fill-height main__stack-panel-right rounded-0 overflow-y-auto"
             :style="{'z-index': prop.zIndex}"
     >
         <v-card-actions class="py-0">
