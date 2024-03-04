@@ -1,5 +1,5 @@
 <template>
-    <v-sheet v-if="categories.length > 0">
+    <v-sheet v-if="categories.length > 0" class="d-flex flex-row">
         <v-row style="max-width: 100vw" justify="start" class="d-flex flex-row float-left">
             <v-col v-for="category of categories" :key="`col-${category.id}`"
                    :cols="innerGridCols"
