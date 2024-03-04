@@ -17,13 +17,13 @@
                                         elevation: 0
                                         }"/>
                             </v-col>
-                            <v-col cols="2" class="d-flex flex-row justify-center" v-if="item.amount">
+                            <v-col cols="3" class="d-flex flex-row justify-center" v-if="item.amount">
                                 <v-row class="d-flex flex-row align-center justify-center">
-                                    <v-col cols="6">
-                                        <v-text-field :value="item.amount" :readonly="true">
+                                    <v-col cols="6" class="py-0">
+                                        <v-text-field :value="item.amount" :readonly="true" dense>
                                         </v-text-field>
                                     </v-col>
-                                    <v-col cols="3">
+                                    <v-col class="py-0" cols="6">
                                         <v-tooltip top>
                                             <template v-slot:activator="{ on, attrs }">
                                                 <v-icon
@@ -39,9 +39,10 @@
                                                     Больше
                                                 </span>
                                         </v-tooltip>
-                                        <v-tooltip top>
+                                        <v-tooltip top v-if="item.amount > 1">
                                             <template v-slot:activator="{ on, attrs }">
                                                 <v-icon
+
                                                         color="red"
                                                         v-on="on"
                                                         v-bind="attrs"
@@ -54,13 +55,10 @@
                                                     Меньше
                                                 </span>
                                         </v-tooltip>
-                                    </v-col>
-                                    <v-col cols="3">
-                                        <v-tooltip top>
+                                        <v-tooltip top v-else>
                                             <template v-slot:activator="{ on, attrs }">
                                                 <v-icon
                                                         color="red"
-                                                        large
                                                         v-on="on"
                                                         v-bind="attrs"
                                                         v-on:click="deleteItem(item)"

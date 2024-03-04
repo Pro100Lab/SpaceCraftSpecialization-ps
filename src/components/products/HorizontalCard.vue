@@ -15,7 +15,7 @@
                 />
             </v-col>
             <v-col :cols="actions ? 7 : toSearch ? 10 : 8" class="d-flex flex-column">
-                <v-card-title class="mb-4 py-0 text-wrap text-break" v-on:click="goToProduct(idx)" style="cursor: pointer"
+                <v-card-title class="mb-4 py-0 text-wrap text-break" v-on:click="goToProduct(idx)" style="cursor: pointer; font-size: 12px; line-height: 14px;"
                 >
                     {{title}}
                 </v-card-title>
