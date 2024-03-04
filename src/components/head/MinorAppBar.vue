@@ -27,7 +27,7 @@
                                 :to="`/category/${child.id}`"
                         >
                             <v-list-item-title  >
-                                <span class="minor-bar__adaptive-font">{{ child.title }}</span></v-list-item-title>
+                                <span class="minor-bar__adaptive-font" :style="text">{{ child.title }}</span></v-list-item-title>
                         </v-list-item>
                     </v-list>
                 </v-menu>
