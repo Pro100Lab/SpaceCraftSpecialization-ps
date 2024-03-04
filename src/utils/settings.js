@@ -12,7 +12,7 @@ export const endpoint_version = 'v1';
 export const wss_schema = 'wss';
 export const ws_schema = 'ws';
 
-const endpoint = gorenerga;
+const endpoint = flagman;
 
 export function getURL(urn) {
     return `${is_debug ? debug_schema : schema}://${is_debug ? debug_endpoint : endpoint}/${is_debug ? '' : 'api/'}${urn}`
