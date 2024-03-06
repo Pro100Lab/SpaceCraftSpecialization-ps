@@ -41,9 +41,12 @@
         line-height: calc(var(--index) * 1);
     }
 
-    @media screen and (max-width: 1280px) {
-        font-size: calc(var(--index) * 1.3);
-        line-height: calc(var(--index) * 1.4);
+    @media screen and (max-width: 960px) {
+        .category-card-adaptive {
+
+            font-size: calc(var(--index) * 1.4);
+            line-height: calc(var(--index) * 1.5);
+        }
     }
     .scale {
         display: inline-block; /* Строчно-блочный элемент */

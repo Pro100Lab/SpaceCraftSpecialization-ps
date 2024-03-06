@@ -1,7 +1,7 @@
 <template>
     <div class="py-0" id="category-products">
         <v-row v-if="hasFilters && window.innerWidth <= 1280 && productsGroups.length > 0" >
-            <v-col cols="12">
+            <v-col  cols="12">
                 <ProductFilter
                         v-bind="{filters,
                                  expands: true}"
@@ -10,7 +10,7 @@
         </v-row>
         <v-scroll-y-transition>
         <v-row v-if="blocks && blocks.length > 0">
-            <v-col class="fill-height py-0">
+            <v-col class="fill-height">
                 <BlockInfo
                         v-for="(info, index) of blocks"
                         :key="`${info['@Block']}-${index}`"
@@ -20,10 +20,10 @@
         </v-scroll-y-transition>
         <template v-if="productsGroups && productsGroups.length > 0">
         <v-row v-if="hasFilters" class="d-flex flex-row align-start justify-start" >
-            <v-col v-if="window.innerWidth > 1280 && productsGroups.length > 0" cols="3" class="py-0">
-                <ProductFilter class="py-0" v-bind="{filters}" v-if="!withoutFilter"/>
+            <v-col v-if="window.innerWidth > 1280 && productsGroups.length > 0" cols="3">
+                <ProductFilter v-bind="{filters}" v-if="!withoutFilter"/>
             </v-col>
-            <v-col class="py-0" :cols="window.innerWidth > 1280 ? 9 : 12">
+            <v-col :cols="window.innerWidth > 1280 ? 9 : 12">
                 <div ref="productsColsRef">
                     <ProductPresets
                             :presets="this.presets" :expands="window.innerWidth <= 1280"
