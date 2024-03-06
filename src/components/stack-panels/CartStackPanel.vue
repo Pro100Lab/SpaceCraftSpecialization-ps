@@ -1,5 +1,6 @@
 <template>
     <v-card id='cart-card' ref="cartCard" class="fill-height elevation-0 overflow-x-hidden" color="white">
+        <template v-if="!loading">
         <transition  name="slide-fade" mode="out-in">
             <div class="mx-2" id="order-cart-info" ref="orderCartInfo" v-if="!this.isOrdering" key="cart">
                 <div class="px-2 d-flex flex-column justify-space-between" v-if="products && products.length > 0">
@@ -157,6 +158,13 @@
             </v-card>
 
         </template>
+        </template>
+        <template v-else>
+            <div class="d-flex flex-column justify-center align-center fill-height">
+            <v-progress-circular indeterminate></v-progress-circular>
+            <v-card-title>Загружаем корзину...</v-card-title>
+            </div>
+        </template>
     </v-card>
 </template>
 
@@ -202,7 +210,8 @@
                 comment: '',
                 orderFormValid: false,
                 radioError: null,
-                noPhoto: null
+                noPhoto: null,
+                loading: true,
             }
         },
         computed: {
@@ -240,6 +249,7 @@
                         const productsData = response.data;
                         this.products = productsData.products;
                         this.totalPrice = productsData.total_price;
+                        this.loading = false;
                     }
                 )
             },
@@ -271,6 +281,7 @@
             this.requisites.phone = getUser().user.Profile.phone;
         },
         async beforeMount() {
+            this.loading = true;
             await loader().loadOptions();
             this.noPhoto = loader().getOption(['Common', 'NoPhoto']);
         },

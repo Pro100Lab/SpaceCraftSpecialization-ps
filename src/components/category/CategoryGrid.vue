@@ -31,19 +31,11 @@
                 windowWidth: 1281
             }
         },
-        watch: {
-            categories() {
-                this.calculateGridCols();
-                this.buildCategories();
-
-            }
-        },
         mounted() {
             this.calculateGridCols();
             window.addEventListener('resize', () => {
                 this.calculateGridCols();
             });
-            this.buildCategories();
         },
         methods: {
             buildCategories() {
@@ -58,8 +50,8 @@
                     })
                 }
 
-                if( this.gridCols )
-                    this.innerGridCols = this.gridCols;
+                // if( this.gridCols )
+                //     this.innerGridCols = this.gridCols;
             },
             calculateGridCols() {
                 const windowWidth = window.innerWidth;
