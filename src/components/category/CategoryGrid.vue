@@ -1,7 +1,7 @@
 <template>
-    <v-sheet v-if="categories.length > 0" class="d-flex flex-row">
+    <v-sheet v-if="categories.length > 0" color="transparent" class="mx-auto">
         <v-row style="max-width: 100vw" justify="start">
-            <v-col v-for="category of categories" :key="`col-${category.id}`"
+            <v-col class="pt-0 pl-0" v-for="category of categories" :key="`col-${category.id}`"
                    :cols="12 / innerGridCols"
                    >
                 <CategoryCard v-bind="{

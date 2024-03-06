@@ -3,7 +3,7 @@
         <v-card
                 :elevation="hover ? 6 : 0"
                 width="240"
-                class="d-flex flex-column fill-height transparent"
+                class="d-flex flex-column fill-height"
                 v-on:click="goToCategory(id)"
         >
             <v-img :src="getStatic(image)"
@@ -37,13 +37,13 @@
 
 <style>
     .category-card-adaptive{
-        font-size: calc(var(--index) * 1.3);
-        line-height: calc(var(--index) * 1.4);
+        font-size: calc(var(--index) * 0.9);
+        line-height: calc(var(--index) * 1);
     }
 
     @media screen and (max-width: 1280px) {
-        font-size: calc(var(--index) * 0.9);
-        line-height: calc(var(--index) * 1);
+        font-size: calc(var(--index) * 1.3);
+        line-height: calc(var(--index) * 1.4);
     }
     .scale {
         display: inline-block; /* Строчно-блочный элемент */
