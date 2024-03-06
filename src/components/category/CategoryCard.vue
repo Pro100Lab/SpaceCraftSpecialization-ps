@@ -37,10 +37,14 @@
 
 <style>
     .category-card-adaptive{
+        font-size: calc(var(--index) * 1.3);
+        line-height: calc(var(--index) * 1.4);
+    }
+
+    @media screen and (max-width: 1280px) {
         font-size: calc(var(--index) * 0.9);
         line-height: calc(var(--index) * 1);
     }
-
     .scale {
         display: inline-block; /* Строчно-блочный элемент */
         overflow: hidden; /* Скрываем всё за контуром */

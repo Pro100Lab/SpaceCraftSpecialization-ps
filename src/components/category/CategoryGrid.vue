@@ -66,7 +66,7 @@
                 }
                 if( windowWidth <= 960 ) {
                     this.windowWidth = windowWidth;
-                    this.cardWidth = this.windowWidth * 0.45;
+                    this.cardWidth = this.windowWidth * 0.88;
                 }
 
                 let shouldBeCols = Math.floor(this.windowWidth/this.cardWidth);
