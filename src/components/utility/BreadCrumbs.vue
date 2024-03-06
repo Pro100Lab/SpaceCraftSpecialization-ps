@@ -31,6 +31,7 @@
 
             this.schema = getLoader().getOption(['Common', 'Schema']);
             this.showCrumbs = getLoader().getBool(['Common', 'BreadCrumbs'], this.isMobile);
+            this.background = getLoader().getBool(['Common', 'BreadCrumbs', 'Background'], this.isMobile);
 
             console.log('show crumbs', this.showCrumbs);
         },
